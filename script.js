@@ -232,28 +232,183 @@
         shards.push(sh);
       });
 
-      // 6. Neural Particle Constellation
-      const pCount = 520;
+      // 6. Synchronized Morphing 3D Particle System
+      // 1800 particles smoothly morphing between 5 distinct geometric shapes & features across scroll
+      const pCount = 1800;
       const pGeo = new THREE.BufferGeometry();
       const pPos = new Float32Array(pCount * 3);
+      const pCols = new Float32Array(pCount * 3);
+
+      // Create soft glowing circular particle sprite
+      const createParticleSprite = () => {
+        const sc = document.createElement('canvas');
+        sc.width = 64; sc.height = 64;
+        const sctx = sc.getContext('2d');
+        const gr = sctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+        gr.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        gr.addColorStop(0.2, 'rgba(157, 247, 187, 0.9)');
+        gr.addColorStop(0.5, 'rgba(157, 247, 187, 0.3)');
+        gr.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        sctx.fillStyle = gr;
+        sctx.fillRect(0, 0, 64, 64);
+        const tex = new THREE.CanvasTexture(sc);
+        tex.needsUpdate = true;
+        return tex;
+      };
+
+      // Generate 5 Distinct Target 3D Shapes
+      const shapes = [
+        new Float32Array(pCount * 3), // 0: Fibonacci Neural Sphere
+        new Float32Array(pCount * 3), // 1: 3D Quantized Matrix Hypercube
+        new Float32Array(pCount * 3), // 2: Toroidal Vortex Loop
+        new Float32Array(pCount * 3), // 3: Synaptic Double Helix Waveform
+        new Float32Array(pCount * 3)  // 4: Cosmic Concentric Portal Beacon
+      ];
+
+      // Generate 5 Matching Color Palettes (R, G, B)
+      const colorPalettes = [
+        new Float32Array(pCount * 3), // 0: Mint & Diamond White
+        new Float32Array(pCount * 3), // 1: Emerald & Cyan Data Matrix
+        new Float32Array(pCount * 3), // 2: Gradient Mint & Soft Lavender
+        new Float32Array(pCount * 3), // 3: Dual Strand Mint & Violet
+        new Float32Array(pCount * 3)  // 4: Radiant Gold-White & Electric Mint
+      ];
+
+      // Shape 0: Fibonacci Neural Sphere & Halo Corona (Hero)
       for (let i = 0; i < pCount; i++) {
-        const r = 2.0 + Math.random() * 5.0;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos((Math.random() * 2) - 1);
-        pPos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-        pPos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-        pPos[i * 3 + 2] = r * Math.cos(phi);
+        const y = 1 - (i / (pCount - 1)) * 2;
+        const r = Math.sqrt(1 - y * y);
+        const phi = i * 2.399963229728653;
+        const isCore = i < pCount * 0.42;
+        const radius = isCore ? (1.55 + (i % 7) * 0.04) : (3.2 + (i % 13) * 0.07);
+        shapes[0][i * 3] = Math.cos(phi) * r * radius;
+        shapes[0][i * 3 + 1] = y * radius;
+        shapes[0][i * 3 + 2] = Math.sin(phi) * r * radius;
+
+        if (isCore) {
+          colorPalettes[0][i * 3] = 0.61;     // R
+          colorPalettes[0][i * 3 + 1] = 0.97; // G
+          colorPalettes[0][i * 3 + 2] = 0.73; // B
+        } else {
+          colorPalettes[0][i * 3] = 0.92;
+          colorPalettes[0][i * 3 + 1] = 0.98;
+          colorPalettes[0][i * 3 + 2] = 0.94;
+        }
       }
+
+      // Shape 1: 3D Quantized Matrix Hypercube Lattice (About / Stats & Mission)
+      const kDim = 12;
+      for (let i = 0; i < pCount; i++) {
+        const ix = i % kDim;
+        const iy = Math.floor(i / kDim) % kDim;
+        const iz = Math.floor(i / (kDim * kDim)) % kDim;
+        const L = 3.6;
+        shapes[1][i * 3] = (ix / (kDim - 1) - 0.5) * L + ((i % 5) - 2) * 0.04;
+        shapes[1][i * 3 + 1] = (iy / (kDim - 1) - 0.5) * L + ((i % 7) - 3) * 0.04;
+        shapes[1][i * 3 + 2] = (iz / (kDim - 1) - 0.5) * L + ((i % 3) - 1) * 0.04;
+
+        if (i % 2 === 0) {
+          colorPalettes[1][i * 3] = 0.22;
+          colorPalettes[1][i * 3 + 1] = 0.75;
+          colorPalettes[1][i * 3 + 2] = 0.38;
+        } else {
+          colorPalettes[1][i * 3] = 0.32;
+          colorPalettes[1][i * 3 + 1] = 0.88;
+          colorPalettes[1][i * 3 + 2] = 0.82;
+        }
+      }
+
+      // Shape 2: Toroidal Vortex Loop (Pillars & Development Workflow)
+      for (let i = 0; i < pCount; i++) {
+        const u = (i / pCount) * Math.PI * 8;
+        const v = (i / pCount) * Math.PI * 2;
+        const R = 2.85;
+        const tr = 0.88 + (i % 9) * 0.05;
+        shapes[2][i * 3] = (R + tr * Math.cos(u)) * Math.cos(v);
+        shapes[2][i * 3 + 1] = tr * Math.sin(u);
+        shapes[2][i * 3 + 2] = (R + tr * Math.cos(u)) * Math.sin(v);
+
+        const mixRatio = (Math.sin(v) + 1) * 0.5;
+        colorPalettes[2][i * 3] = 0.61 * (1 - mixRatio) + 0.79 * mixRatio;
+        colorPalettes[2][i * 3 + 1] = 0.97 * (1 - mixRatio) + 0.72 * mixRatio;
+        colorPalettes[2][i * 3 + 2] = 0.73 * (1 - mixRatio) + 1.00 * mixRatio;
+      }
+
+      // Shape 3: Synaptic Double Helix Waveform (Selected Work / Deep Learning)
+      for (let i = 0; i < pCount; i++) {
+        const s = i % 2;
+        const isBridge = i % 5 === 0;
+        const t = (i / pCount) * 2 - 1;
+        const rad = 1.65;
+        const theta = t * Math.PI * 5 + s * Math.PI;
+
+        if (isBridge) {
+          // Horizontal synaptic rung connecting the two strands
+          const bridgeFrac = (i % 15) / 15;
+          shapes[3][i * 3] = Math.cos(theta) * rad * (1 - bridgeFrac * 2);
+          shapes[3][i * 3 + 1] = t * 3.6;
+          shapes[3][i * 3 + 2] = Math.sin(theta) * rad * (1 - bridgeFrac * 2);
+
+          colorPalettes[3][i * 3] = 0.95;
+          colorPalettes[3][i * 3 + 1] = 0.98;
+          colorPalettes[3][i * 3 + 2] = 0.95;
+        } else {
+          shapes[3][i * 3] = Math.cos(theta) * rad;
+          shapes[3][i * 3 + 1] = t * 3.6;
+          shapes[3][i * 3 + 2] = Math.sin(theta) * rad;
+
+          if (s === 0) {
+            colorPalettes[3][i * 3] = 0.61;
+            colorPalettes[3][i * 3 + 1] = 0.97;
+            colorPalettes[3][i * 3 + 2] = 0.73;
+          } else {
+            colorPalettes[3][i * 3] = 0.76;
+            colorPalettes[3][i * 3 + 1] = 0.64;
+            colorPalettes[3][i * 3 + 2] = 0.98;
+          }
+        }
+      }
+
+      // Shape 4: Cosmic Concentric Portal Beacon (Let's Talk CTA)
+      for (let i = 0; i < pCount; i++) {
+        const m = i % 7;
+        const r = 0.65 + m * 0.52;
+        const a = (i / pCount) * Math.PI * 14;
+        shapes[4][i * 3] = r * Math.cos(a);
+        shapes[4][i * 3 + 1] = r * Math.sin(a);
+        shapes[4][i * 3 + 2] = (m - 3) * 0.45 + Math.sin(a * 4) * 0.15;
+
+        if (m <= 2) {
+          colorPalettes[4][i * 3] = 1.0;
+          colorPalettes[4][i * 3 + 1] = 0.96;
+          colorPalettes[4][i * 3 + 2] = 0.88;
+        } else {
+          colorPalettes[4][i * 3] = 0.62;
+          colorPalettes[4][i * 3 + 1] = 0.98;
+          colorPalettes[4][i * 3 + 2] = 0.75;
+        }
+      }
+
+      // Initialize buffer with Shape 0
+      for (let i = 0; i < pCount * 3; i++) {
+        pPos[i] = shapes[0][i];
+        pCols[i] = colorPalettes[0][i];
+      }
+
       pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+      pGeo.setAttribute('color', new THREE.BufferAttribute(pCols, 3));
+
       const pMat = new THREE.PointsMaterial({
-        color: 0x9DF7BB,
-        size: 0.038,
+        size: 0.052,
+        map: createParticleSprite(),
+        vertexColors: true,
         transparent: true,
-        opacity: 0.65,
-        blending: THREE.AdditiveBlending
+        opacity: 0.85,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
       });
       const particles = new THREE.Points(pGeo, pMat);
-      scene.add(particles);
+      modelRoot.add(particles);
 
       // 7. Lighting
       const ambientLight = new THREE.AmbientLight(0x0a140e, 1.2);
@@ -283,7 +438,7 @@
       };
       window.addEventListener('resize', onResize);
 
-      // Frame updater
+      // Frame updater with synchronized particle morphing across scroll
       let time = 0;
       update3DScene = (p, dt = 0.016) => {
         time += dt;
@@ -295,18 +450,18 @@
         cursorLight.position.set(mouse.x * 4, mouse.y * 3, 3.2);
 
         if (!reduce) {
-          // Model rotation & drift
-          coreGroup.rotation.y = time * 0.22 + p * 1.8;
-          coreGroup.rotation.x = Math.sin(time * 0.3) * 0.12 + p * 0.6;
+          // Model rotation & drift synchronized with scroll
+          coreGroup.rotation.y = time * 0.22 + p * 2.0;
+          coreGroup.rotation.x = Math.sin(time * 0.3) * 0.12 + p * 0.7;
 
           nucleus.rotation.y = -time * 0.45;
           nucleus.rotation.z = time * 0.3;
           const pulse = 1 + Math.sin(time * 3.0) * 0.08;
           nucleus.scale.set(pulse, pulse, pulse);
 
-          ringA.rotation.z = -22 * Math.PI / 180 + time * 0.28 + p * 1.6;
-          ringB.rotation.x = 18 * Math.PI / 180 + time * 0.22 + p * 1.4;
-          ringC.rotation.y = 55 * Math.PI / 180 - time * 0.32 - p * 1.8;
+          ringA.rotation.z = -22 * Math.PI / 180 + time * 0.28 + p * 2.1;
+          ringB.rotation.x = 18 * Math.PI / 180 + time * 0.22 + p * 1.7;
+          ringC.rotation.y = 55 * Math.PI / 180 - time * 0.32 - p * 1.9;
 
           shards.forEach(sh => {
             sh.rotation.x += sh.userData.rx;
@@ -314,8 +469,81 @@
             sh.rotation.z += sh.userData.rz;
           });
 
-          particles.rotation.y = time * 0.03 + p * 0.6;
-          particles.rotation.x = time * 0.02;
+          // Calculate 4-segment scroll transition [0..1] -> [0..4]
+          const seg = Math.min(3.9999, Math.max(0, p * 4));
+          const idx = Math.floor(seg);
+          const localT = seg - idx;
+          const easeT = localT * localT * (3 - 2 * localT); // Smooth Hermite S-curve
+
+          const curShape = shapes[idx];
+          const nextShape = shapes[idx + 1];
+          const curCol = colorPalettes[idx];
+          const nextCol = colorPalettes[idx + 1];
+
+          // Mouse coords in 3D for interactive repulsion ripple
+          const mx3 = mouse.x * 3.6;
+          const my3 = mouse.y * 2.8;
+
+          const posArr = pGeo.attributes.position.array;
+          const colArr = pGeo.attributes.color.array;
+
+          for (let i = 0; i < pCount; i++) {
+            const i3 = i * 3;
+            // Base interpolation between shapes
+            let x = curShape[i3] + (nextShape[i3] - curShape[i3]) * easeT;
+            let y = curShape[i3 + 1] + (nextShape[i3 + 1] - curShape[i3 + 1]) * easeT;
+            let z = curShape[i3 + 2] + (nextShape[i3 + 2] - curShape[i3 + 2]) * easeT;
+
+            // Synchronized feature dynamics based on segment
+            if (idx === 0) {
+              // Neural Sphere: Organic breathing pulse
+              const pulseS = Math.sin(time * 2.4 + i * 0.08) * 0.07;
+              x += x * pulseS;
+              y += y * pulseS;
+              z += z * pulseS;
+            } else if (idx === 1) {
+              // Hypercube Grid: Quantized matrix ripples
+              const waveC = Math.sin(time * 3.4 + x * 1.6) * 0.06;
+              y += waveC;
+              z += Math.cos(time * 2.8 + y * 1.4) * 0.04;
+            } else if (idx === 2) {
+              // Toroidal Vortex: Flowing stream circulation
+              const rotAngle = time * 0.35 + (i / pCount) * Math.PI * 0.6;
+              const cosA = Math.cos(rotAngle);
+              const sinA = Math.sin(rotAngle);
+              const nx = x * cosA - z * sinA;
+              const nz = x * sinA + z * cosA;
+              x = nx;
+              z = nz;
+            } else if (idx === 3) {
+              // Double Helix: Twisting vibration & harmonic oscillation
+              const waveH = Math.cos(time * 2.6 + y * 1.4) * 0.08;
+              x += waveH;
+              z += Math.sin(time * 2.6 + y * 1.4) * 0.08;
+            }
+
+            // Interactive mouse repulsion field
+            const dx = x - mx3;
+            const dy = y - my3;
+            const distSq = dx * dx + dy * dy;
+            if (distSq < 2.8) {
+              const repel = (1 - Math.sqrt(distSq) / 1.67) * 0.42;
+              x += dx * repel;
+              y += dy * repel;
+            }
+
+            posArr[i3] = x;
+            posArr[i3 + 1] = y;
+            posArr[i3 + 2] = z;
+
+            // Smooth color morphing across scroll
+            colArr[i3] = curCol[i3] + (nextCol[i3] - curCol[i3]) * easeT;
+            colArr[i3 + 1] = curCol[i3 + 1] + (nextCol[i3 + 1] - curCol[i3 + 1]) * easeT;
+            colArr[i3 + 2] = curCol[i3 + 2] + (nextCol[i3 + 2] - curCol[i3 + 2]) * easeT;
+          }
+
+          pGeo.attributes.position.needsUpdate = true;
+          pGeo.attributes.color.needsUpdate = true;
 
           // Parallax & scroll camera track
           modelRoot.rotation.y = mouse.x * 0.38;
