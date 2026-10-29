@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>aman dixit | builds AI and web projects that work</title>
-<meta name="description" content="Aman Dixit, first-year student at Newton School of Technology and aspiring AI engineer. VoiceShield, MediLink, Palash Assistant Pro.">
+<meta name="description" content="Aman Dixit, first-year student at Newton School of Technology and aspiring AI engineer. SkillStress, MediLink, Palash Assistant Pro.">
 <meta name="theme-color" content="#0A0A0A">
 <meta property="og:title" content="aman dixit">
 <meta property="og:description" content="Builds AI and web projects that work.">
@@ -82,8 +82,8 @@
       <div class="face back glass"><ul><li>HTML</li><li>JavaScript</li><li>TypeScript</li><li>React</li><li>Vite</li><li>Python</li><li>Flask</li><li>Express</li><li>Prisma</li><li>PostgreSQL</li></ul></div>
     </article>
     <article class="flip tilt" tabindex="0">
-      <div class="face front glass"><h2>AI applications</h2><p>Tools built on pretrained models, such as detecting AI-generated voices.</p><small>Hover or tap for the stack</small></div>
-      <div class="face back glass"><ul><li>Hugging Face</li><li>wav2vec2</li><li>Python</li><li>Flask</li></ul></div>
+      <div class="face front glass"><h2>AI applications</h2><p>Tools built to evaluate, inspect, and benchmark AI systems and agent workflows.</p><small>Hover or tap for the stack</small></div>
+      <div class="face back glass"><ul><li>FastAPI</li><li>Python</li><li>OpenAI</li><li>Ollama</li><li>PyTorch</li><li>Hugging Face</li></ul></div>
     </article>
     <article class="flip tilt" tabindex="0">
       <div class="face front glass"><h2>Tools and workflow</h2><p>Version control, tests and hosting habits that keep projects moving.</p><small>Hover or tap for the stack</small></div>
@@ -94,9 +94,9 @@
   <section class="work" id="work">
     <h2 class="h1">Selected work</h2>
     <article class="glass project tilt">
-      <div><h3>VoiceShield</h3><p>AI deepfake voice detector. Upload or record a sample and get a trust score from a wav2vec2 model, with every analysis saved to a history API.</p>
-      <p class="tags">React, Flask, Hugging Face, PostgreSQL</p></div>
-      <div class="links"><a class="btn mag" href="https://voiceshield-phi.vercel.app" target="_blank" rel="noopener" data-cursor="View">Live demo</a><a class="link" href="https://github.com/am4ndixit/voiceshield" target="_blank" rel="noopener">Code</a></div>
+      <div><h3>SkillStress</h3><p>AI agent evaluation and stress-testing prototype. Inspects skill obligations, runs LLM task traces with automated same-model judging, and generates repair proposals.</p>
+      <p class="tags">React, Vite, FastAPI, Python, SQLite</p></div>
+      <div class="links"><a class="btn mag" href="https://skillstress.vercel.app/" target="_blank" rel="noopener" data-cursor="View">Live demo</a><a class="link" href="https://github.com/am4ndixit/skillstress" target="_blank" rel="noopener">Code</a></div>
     </article>
     <article class="glass project tilt">
       <div><h3>MediLink</h3><p>Healthcare platform prototype built around needle-free anemia screening from a phone camera, with a patient portal and admin console. A demo, not a validated medical tool.</p>
@@ -114,14 +114,42 @@
     <h2 class="h1">First year, already shipping.</h2>
     <ol class="timeline" id="timeline">
       <li><h3>Learn</h3><p>Started at Newton School of Technology, with a focus on AI engineering and web development.</p></li>
-      <li><h3>Build</h3><p>Three projects shipped: VoiceShield, MediLink and Palash Assistant Pro, with live demos for two.</p></li>
+      <li><h3>Build</h3><p>Three projects shipped: SkillStress, MediLink and Palash Assistant Pro, with live demos for two.</p></li>
       <li><h3>Compete</h3><p>3rd place at Hacktober Hackday, a hackathon at Vishwakarma University organised by Google Developer Group VU.</p></li>
       <li><h3>Contribute</h3><p>Next stop, Google Summer of Code 2027. Contributing to open source and building in public to get ready.</p></li>
     </ol>
-    <div class="glass community">
-      <h3>Building in public.</h3>
-      <p>Open source, hackathons and a lot of commits. Follow the work as it happens.</p>
-      <a class="btn mag" href="https://github.com/am4ndixit" target="_blank" rel="noopener">Follow on GitHub</a>
+    <div class="glass community tilt" id="community">
+      <div class="contrib-header">
+        <div>
+          <span class="mono-badge"><span class="pulse-dot"></span> GitHub Activity · 2026</span>
+          <h3 class="contrib-count"><b id="contrib-total">66</b> Contributions</h3>
+          <p class="contrib-sub">Interactive 3D commit landscape for <a href="https://github.com/am4ndixit" target="_blank" rel="noopener" class="link-mint">github.com/am4ndixit</a></p>
+        </div>
+        <div class="contrib-stats-pills">
+          <span class="pill-stat"><b>66</b> Total Commits</span>
+          <span class="pill-stat"><b>11</b> Public Repos</span>
+          <span class="pill-stat"><b>18</b> Active Days</span>
+        </div>
+      </div>
+
+      <div class="contrib-viewport">
+        <canvas id="contrib-canvas" aria-label="3D GitHub contributions visualizer"></canvas>
+        <div class="contrib-tooltip" id="contrib-tooltip">Hover over a 3D commit pillar to inspect</div>
+        <div class="contrib-controls-hint">Drag to rotate 3D view · Hover pillars for details</div>
+      </div>
+
+      <div class="contrib-footer">
+        <div class="contrib-legend">
+          <span>Less</span>
+          <i class="c-l0" title="0 commits"></i>
+          <i class="c-l1" title="1-2 commits"></i>
+          <i class="c-l2" title="3-5 commits"></i>
+          <i class="c-l3" title="6-9 commits"></i>
+          <i class="c-l4" title="10+ commits"></i>
+          <span>More</span>
+        </div>
+        <a class="btn mag" href="https://github.com/am4ndixit" target="_blank" rel="noopener">Follow on GitHub</a>
+      </div>
     </div>
   </section>
 

@@ -644,20 +644,311 @@
         const y = (e.clientY - r.top) / r.height;
         c.style.setProperty('--mx', (x * 100) + '%');
         c.style.setProperty('--my', (y * 100) + '%');
-        if (!c.classList.contains('flip')) {
+        if (!c.classList.contains('flip') && c.id !== 'community') {
           gsap.to(c, {
-            rotateY: (x - 0.5) * 10,
-            rotateX: (0.5 - y) * 9,
+            rotateY: (x - 0.5) * 8,
+            rotateX: (0.5 - y) * 7,
             duration: 0.45,
             transformPerspective: 1000
           });
         }
       });
       c.addEventListener('pointerleave', () => {
-        if (!c.classList.contains('flip')) {
+        if (!c.classList.contains('flip') && c.id !== 'community') {
           gsap.to(c, { rotateX: 0, rotateY: 0, duration: 0.75, ease: 'power3.out' });
         }
       });
     });
   }
+
+  /* ===========================================================
+     3D GitHub Contributions Model (Three.js)
+     Interactive 3D isometric commit matrix for github.com/am4ndixit
+  =========================================================== */
+  const initContributions3D = () => {
+    const cCanvas = $('#contrib-canvas');
+    const cViewport = $('.contrib-viewport');
+    const tooltip = $('#contrib-tooltip');
+    if (!window.THREE || !cCanvas || !cViewport) return;
+
+    try {
+      const cRenderer = new THREE.WebGLRenderer({
+        canvas: cCanvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance'
+      });
+      cRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+      const cScene = new THREE.Scene();
+      const cCamera = new THREE.PerspectiveCamera(38, 16 / 9, 0.1, 100);
+      cCamera.position.set(0, 11.5, 17.5);
+      cCamera.lookAt(0, 0.4, 0);
+
+      const updateSize = () => {
+        const w = cViewport.clientWidth || 800;
+        const h = cViewport.clientHeight || 360;
+        cRenderer.setSize(w, h, false);
+        cCamera.aspect = w / h;
+        cCamera.updateProjectionMatrix();
+      };
+
+      const matrixRoot = new THREE.Group();
+      cScene.add(matrixRoot);
+
+      // Pedestal
+      const pedGeo = new THREE.BoxGeometry(24.2, 0.28, 4.2);
+      const pedMat = new THREE.MeshPhysicalMaterial({
+        color: 0x08110b,
+        roughness: 0.25,
+        metalness: 0.1,
+        transparent: true,
+        opacity: 0.88
+      });
+      const pedestal = new THREE.Mesh(pedGeo, pedMat);
+      pedestal.position.set(0, -0.14, 0);
+      matrixRoot.add(pedestal);
+
+      const wireGeo = new THREE.EdgesGeometry(pedGeo);
+      const wireMat = new THREE.LineBasicMaterial({ color: 0x9DF7BB, transparent: true, opacity: 0.35 });
+      pedestal.add(new THREE.LineSegments(wireGeo, wireMat));
+
+      // Lighting
+      cScene.add(new THREE.AmbientLight(0x0a160e, 1.4));
+      const cDirLight = new THREE.DirectionalLight(0xffffff, 1.1);
+      cDirLight.position.set(6, 12, 8);
+      cScene.add(cDirLight);
+
+      const cMintLight = new THREE.PointLight(0x9DF7BB, 3.0, 20);
+      cMintLight.position.set(-8, 6, 6);
+      cScene.add(cMintLight);
+
+      const cLavLight = new THREE.PointLight(0xC9B8FF, 2.2, 20);
+      cLavLight.position.set(8, 4, -4);
+      cScene.add(cLavLight);
+
+      const hoverLight = new THREE.PointLight(0x9DF7BB, 0, 8);
+      cScene.add(hoverLight);
+
+      // Real 2026 commit records
+      const activeMap = {
+        '31_6': { date: '2026-06-06', count: 2 },
+        '38_4': { date: '2026-07-23', count: 2 },
+        '38_5': { date: '2026-07-24', count: 6 },
+        '39_2': { date: '2026-07-28', count: 14, peak: true },
+        '39_3': { date: '2026-07-29', count: 6 },
+        '42_4': { date: '2026-08-20', count: 1 },
+        '43_4': { date: '2026-08-27', count: 1 },
+        '43_5': { date: '2026-08-28', count: 1 },
+        '43_6': { date: '2026-08-29', count: 3 },
+        '44_2': { date: '2026-09-01', count: 1 },
+        '47_1': { date: '2026-09-21', count: 1 },
+        '47_2': { date: '2026-09-22', count: 1 },
+        '47_3': { date: '2026-09-23', count: 2 },
+        '47_4': { date: '2026-09-24', count: 7 },
+        '51_1': { date: '2026-10-19', count: 2 },
+        '51_4': { date: '2026-10-22', count: 6 },
+        '52_2': { date: '2026-10-27', count: 8, hackday: true },
+        '52_4': { date: '2026-10-29', count: 2 }
+      };
+
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const formatDateStr = (dStr) => {
+        try {
+          const [y, m, d] = dStr.split('-');
+          return `${months[+m - 1]} ${+d}, ${y}`;
+        } catch { return dStr; }
+      };
+
+      const interactiveMeshes = [];
+      const cols = 53, rows = 7;
+      const spacingX = 0.44, spacingZ = 0.48;
+
+      const baseTileMat = new THREE.MeshStandardMaterial({
+        color: 0x121c15,
+        roughness: 0.38,
+        metalness: 0.08
+      });
+
+      const getPillarMat = count => {
+        if (count >= 10) {
+          return new THREE.MeshStandardMaterial({
+            color: 0x9DF7BB,
+            emissive: 0x4fc577,
+            emissiveIntensity: 1.1,
+            roughness: 0.12,
+            metalness: 0.1
+          });
+        }
+        if (count >= 6) {
+          return new THREE.MeshStandardMaterial({
+            color: 0x40c463,
+            emissive: 0x1f7435,
+            emissiveIntensity: 0.9,
+            roughness: 0.18
+          });
+        }
+        if (count >= 3) {
+          return new THREE.MeshStandardMaterial({
+            color: 0x2fa856,
+            emissive: 0x134d26,
+            emissiveIntensity: 0.7,
+            roughness: 0.22
+          });
+        }
+        return new THREE.MeshStandardMaterial({
+          color: 0x226b3a,
+          emissive: 0x0c3016,
+          emissiveIntensity: 0.5,
+          roughness: 0.25
+        });
+      };
+
+      // Build 53 x 7 grid
+      for (let w = 0; w < cols; w++) {
+        for (let d = 0; d < rows; d++) {
+          const key = `${w}_${d}`;
+          const item = activeMap[key];
+          const count = item ? item.count : 0;
+          const posX = (w - cols / 2 + 0.5) * spacingX;
+          const posZ = (d - rows / 2 + 0.5) * spacingZ;
+
+          let mesh;
+          if (count > 0) {
+            const h = 0.45 + Math.min(count, 14) * 0.22;
+            const geo = new THREE.BoxGeometry(0.36, h, 0.36);
+            mesh = new THREE.Mesh(geo, getPillarMat(count));
+            mesh.position.set(posX, h / 2, posZ);
+
+            if (item.peak) {
+              const bGeo = new THREE.SphereGeometry(0.08, 12, 12);
+              const bMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+              const beacon = new THREE.Mesh(bGeo, bMat);
+              beacon.position.set(0, h / 2 + 0.15, 0);
+              mesh.add(beacon);
+            }
+          } else {
+            const geo = new THREE.BoxGeometry(0.36, 0.08, 0.36);
+            mesh = new THREE.Mesh(geo, baseTileMat);
+            mesh.position.set(posX, 0.04, posZ);
+          }
+
+          mesh.userData = {
+            date: item ? item.date : `2026-w${w + 1}-d${d + 1}`,
+            count,
+            peak: item?.peak,
+            hackday: item?.hackday
+          };
+          matrixRoot.add(mesh);
+          interactiveMeshes.push(mesh);
+        }
+      }
+
+      // Initial isometric orientation
+      let targetRotY = -0.32;
+      let targetRotX = 0.48;
+      let currRotY = -0.32;
+      let currRotX = 0.48;
+      matrixRoot.rotation.set(currRotX, currRotY, 0);
+
+      // Drag to rotate in 3D
+      let isDragging = false;
+      let prevPointer = { x: 0, y: 0 };
+
+      cCanvas.addEventListener('pointerdown', e => {
+        isDragging = true;
+        prevPointer.x = e.clientX;
+        prevPointer.y = e.clientY;
+      });
+
+      window.addEventListener('pointermove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevPointer.x;
+        const dy = e.clientY - prevPointer.y;
+        prevPointer.x = e.clientX;
+        prevPointer.y = e.clientY;
+
+        targetRotY += dx * 0.007;
+        targetRotX += dy * 0.005;
+        targetRotX = Math.max(0.18, Math.min(0.95, targetRotX));
+      });
+
+      window.addEventListener('pointerup', () => { isDragging = false; });
+      window.addEventListener('pointercancel', () => { isDragging = false; });
+
+      // Raycasting for interactive hover tooltips
+      const raycaster = new THREE.Raycaster();
+      const pointerVec = new THREE.Vector2();
+      let hoveredMesh = null;
+
+      cCanvas.addEventListener('pointermove', e => {
+        const rect = cCanvas.getBoundingClientRect();
+        pointerVec.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        pointerVec.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(pointerVec, cCamera);
+        const intersects = raycaster.intersectObjects(interactiveMeshes);
+
+        if (intersects.length > 0) {
+          const hit = intersects[0].object;
+          if (hit !== hoveredMesh) {
+            hoveredMesh = hit;
+            const u = hit.userData;
+            const dFormatted = formatDateStr(u.date);
+            if (u.count > 0) {
+              const note = u.peak ? ' · Peak day' : (u.hackday ? ' · Hackday 3rd place' : '');
+              tooltip.textContent = `${dFormatted} · ${u.count} contribution${u.count > 1 ? 's' : ''}${note}`;
+              tooltip.classList.add('highlight');
+              hoverLight.position.copy(hit.position);
+              hoverLight.position.y += 1.5;
+              hoverLight.intensity = 2.0;
+            } else {
+              tooltip.textContent = `${dFormatted} · No contributions`;
+              tooltip.classList.remove('highlight');
+              hoverLight.intensity = 0;
+            }
+          }
+        } else if (hoveredMesh) {
+          hoveredMesh = null;
+          tooltip.textContent = 'Hover over a 3D commit pillar to inspect';
+          tooltip.classList.remove('highlight');
+          hoverLight.intensity = 0;
+        }
+      });
+
+      cCanvas.addEventListener('pointerleave', () => {
+        hoveredMesh = null;
+        tooltip.textContent = 'Hover over a 3D commit pillar to inspect';
+        tooltip.classList.remove('highlight');
+        hoverLight.intensity = 0;
+      });
+
+      // Responsive resize
+      if (window.ResizeObserver) {
+        new ResizeObserver(updateSize).observe(cViewport);
+      }
+      updateSize();
+
+      // Render loop
+      const renderContrib = () => {
+        requestAnimationFrame(renderContrib);
+        if (!isDragging && !reduce) {
+          targetRotY += 0.0012; // Calm automatic drift
+        }
+
+        currRotY += (targetRotY - currRotY) * 0.08;
+        currRotX += (targetRotX - currRotX) * 0.08;
+        matrixRoot.rotation.y = currRotY;
+        matrixRoot.rotation.x = currRotX;
+
+        cRenderer.render(cScene, cCamera);
+      };
+      renderContrib();
+    } catch (e) {
+      console.warn('3D Contributions model initialization skipped:', e);
+    }
+  };
+
+  // Initialize 3D GitHub Contributions Model
+  initContributions3D();
 })();
