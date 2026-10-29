@@ -91,8 +91,9 @@
   }, { passive: true });
 
   /* ===========================================================
-     3D WebGL Model Engine (Three.js)
-     Cinematic AI Neural Core with Gyroscopic Rings & Particles
+     Cinematic 3D Fly-Through Engine (Three.js)
+     Continuous camera dive inside 3D space as you scroll down
+     with floating minimalist geometric structures and stardust
   =========================================================== */
   let hasThree3D = false;
   let update3DScene = null;
@@ -110,144 +111,307 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       if (renderer.toneMapping !== undefined) {
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.15;
+        renderer.toneMappingExposure = 1.2;
       }
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-      camera.position.set(0, 0, 7.2);
+      // Cinematic atmospheric fog matching portfolio obsidian palette (#050806)
+      scene.fog = new THREE.FogExp2(0x050806, 0.0085);
 
-      const modelRoot = new THREE.Group();
-      scene.add(modelRoot);
+      const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 400);
+      camera.position.set(0, 0, 16);
+      const lookTarget = new THREE.Vector3(0, 0, -18);
+      camera.lookAt(lookTarget);
 
-      // Core Group
-      const coreGroup = new THREE.Group();
-      modelRoot.add(coreGroup);
+      // Lights: Ambient base + Headlight moving with camera + Cool & Mint Directionals
+      const ambLight = new THREE.AmbientLight(0x182c20, 2.2);
+      scene.add(ambLight);
 
-      // 1. Faceted Liquid Glass Core
-      const glassMat = new THREE.MeshPhysicalMaterial({
-        color: 0x11281c,
-        emissive: 0x05150c,
-        roughness: 0.14,
-        metalness: 0.15,
-        transmission: 0.88,
-        ior: 1.5,
+      const camLight = new THREE.PointLight(0x9df7bb, 3.8, 100, 1.1);
+      camLight.position.set(0, 0, 16);
+      scene.add(camLight);
+
+      const rimLightA = new THREE.DirectionalLight(0x22c55e, 2.2);
+      rimLightA.position.set(16, 22, 12);
+      scene.add(rimLightA);
+
+      const rimLightB = new THREE.DirectionalLight(0xa5b4fc, 1.4);
+      rimLightB.position.set(-18, -12, -45);
+      scene.add(rimLightB);
+
+      // Materials: Sleek faceted obsidian with luminous mint wireframes
+      const darkBodyMat = new THREE.MeshStandardMaterial({
+        color: 0x0c1a12,
+        emissive: 0x041008,
+        roughness: 0.2,
+        metalness: 0.8,
+        transparent: true,
+        opacity: 0.88
+      });
+
+      const glassBodyMat = new THREE.MeshPhysicalMaterial({
+        color: 0x143322,
+        emissive: 0x071e10,
+        roughness: 0.1,
+        metalness: 0.2,
+        transmission: 0.72,
+        transparent: true,
+        opacity: 0.82,
+        ior: 1.5
+      });
+
+      const edgeMintMat = new THREE.LineBasicMaterial({
+        color: 0x9df7bb,
         transparent: true,
         opacity: 0.85,
-        reflectivity: 0.8
+        blending: THREE.AdditiveBlending
       });
-      const glassGeo = new THREE.IcosahedronGeometry(1.35, 0);
-      const glassMesh = new THREE.Mesh(glassGeo, glassMat);
-      coreGroup.add(glassMesh);
 
-      // 2. Outer Glowing Neural Lattice (Wireframe)
-      const wireMat = new THREE.MeshBasicMaterial({
-        color: 0x9DF7BB,
-        wireframe: true,
+      const edgeWhiteMat = new THREE.LineBasicMaterial({
+        color: 0xffffff,
         transparent: true,
-        opacity: 0.42
+        opacity: 0.55,
+        blending: THREE.AdditiveBlending
       });
-      const wireGeo = new THREE.IcosahedronGeometry(1.358, 0);
-      const wireMesh = new THREE.Mesh(wireGeo, wireMat);
-      coreGroup.add(wireMesh);
 
-      // 3. Inner Pulsing Quantum Nucleus
-      const nucleusMat = new THREE.MeshBasicMaterial({
-        color: 0x9DF7BB,
-        wireframe: true,
+      const edgeSubtleMat = new THREE.LineBasicMaterial({
+        color: 0x34d399,
         transparent: true,
-        opacity: 0.78
+        opacity: 0.65,
+        blending: THREE.AdditiveBlending
       });
-      const nucleus = new THREE.Mesh(new THREE.OctahedronGeometry(0.72, 0), nucleusMat);
-      coreGroup.add(nucleus);
 
-      const centerGlow = new THREE.Mesh(
-        new THREE.SphereGeometry(0.38, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0x9DF7BB, transparent: true, opacity: 0.35 })
+      // Helper to assemble clean minimalist structures with edge-highlighting
+      const structures = [];
+      const addStructure = (geo, bodyMat, lineMat, pos, rot, rotSpeed, floatAmp = 0.35, floatSpeed = 1.0) => {
+        const group = new THREE.Group();
+        const mesh = new THREE.Mesh(geo, bodyMat);
+        group.add(mesh);
+
+        // Crisp wireframe / edge lines
+        const edges = new THREE.EdgesGeometry(geo, 15);
+        const lines = new THREE.LineSegments(edges, lineMat);
+        group.add(lines);
+
+        group.position.set(pos[0], pos[1], pos[2]);
+        group.rotation.set(rot[0], rot[1], rot[2]);
+        scene.add(group);
+
+        structures.push({
+          group,
+          baseY: pos[1],
+          rx: rotSpeed[0],
+          ry: rotSpeed[1],
+          rz: rotSpeed[2],
+          amp: floatAmp,
+          f: floatSpeed,
+          phase: Math.random() * Math.PI * 2
+        });
+        return group;
+      };
+
+      // -------------------------------------------------------------
+      // 1. WAYPOINT 1: HERO & INGRESS GATEWAY (Z: 10 to -25)
+      // -------------------------------------------------------------
+      // Main Entrance Portal Gate: Majestic faceted hexagonal torus ring
+      addStructure(
+        new THREE.TorusGeometry(5.2, 0.24, 16, 64),
+        darkBodyMat, edgeMintMat,
+        [0, 0, -6], [0.12, 0, 0], [0.001, 0.002, 0.0008], 0.2, 0.8
       );
-      coreGroup.add(centerGlow);
 
-      // 4. Concentric Gyroscopic Gimbal Rings
-      const ringMatMint = new THREE.MeshBasicMaterial({
-        color: 0x9DF7BB,
-        transparent: true,
-        opacity: 0.38
-      });
-      const ringMatWhite = new THREE.MeshBasicMaterial({
-        color: 0xF4F6F2,
-        transparent: true,
-        opacity: 0.28
-      });
-      const ringMatLav = new THREE.MeshBasicMaterial({
-        color: 0xC9B8FF,
-        transparent: true,
-        opacity: 0.32
-      });
+      // Hero Focal Gem: Floating Octahedron inside the gateway
+      addStructure(
+        new THREE.OctahedronGeometry(1.5, 0),
+        glassBodyMat, edgeMintMat,
+        [0, 0, -8], [0.3, 0.4, 0.1], [0.006, 0.009, 0.004], 0.35, 1.2
+      );
 
-      const ringA = new THREE.Mesh(new THREE.TorusGeometry(2.35, 0.015, 16, 100), ringMatMint);
-      ringA.rotation.set(68 * Math.PI / 180, 0, -22 * Math.PI / 180);
-      modelRoot.add(ringA);
+      // Flanking Diamond Obelisks / Prisms
+      addStructure(
+        new THREE.CylinderGeometry(0, 0.85, 5.5, 4),
+        darkBodyMat, edgeMintMat,
+        [-7.2, 1.2, -12], [0.2, 0.4, 0.1], [0.003, 0.005, 0.002], 0.4, 1.1
+      );
+      addStructure(
+        new THREE.CylinderGeometry(0, 0.85, 5.5, 4),
+        darkBodyMat, edgeMintMat,
+        [7.5, -0.8, -15], [-0.15, -0.3, 0.2], [-0.002, 0.004, -0.003], 0.35, 0.9
+      );
 
-      const ringB = new THREE.Mesh(new THREE.TorusGeometry(2.85, 0.013, 16, 100), ringMatLav);
-      ringB.rotation.set(0, 62 * Math.PI / 180, 18 * Math.PI / 180);
-      modelRoot.add(ringB);
+      // Weightless Floating Shards
+      addStructure(
+        new THREE.TetrahedronGeometry(1.6, 0),
+        glassBodyMat, edgeWhiteMat,
+        [-4.5, -3.2, -20], [0.4, 0.2, -0.3], [0.005, -0.004, 0.003], 0.3, 1.3
+      );
+      addStructure(
+        new THREE.TetrahedronGeometry(1.7, 0),
+        glassBodyMat, edgeMintMat,
+        [4.8, 3.2, -18], [-0.3, 0.5, 0.2], [-0.004, 0.006, 0.002], 0.3, 1.2
+      );
 
-      const ringC = new THREE.Mesh(new THREE.TorusGeometry(1.85, 0.012, 16, 100), ringMatWhite);
-      ringC.rotation.set(38 * Math.PI / 180, 55 * Math.PI / 180, 0);
-      modelRoot.add(ringC);
+      // -------------------------------------------------------------
+      // 2. WAYPOINT 2: SELECTED WORK / POLYHEDRA CORRIDOR (Z: -35 to -75)
+      // -------------------------------------------------------------
+      // Truncated Octahedron / Archimedean Solid
+      addStructure(
+        new THREE.IcosahedronGeometry(2.4, 0),
+        darkBodyMat, edgeMintMat,
+        [-4.8, 1.6, -42], [0.2, -0.3, 0.1], [0.004, 0.006, -0.002], 0.45, 0.95
+      );
 
-      // Orbital Satellites
-      const satGeo = new THREE.SphereGeometry(0.065, 12, 12);
-      const satMat = new THREE.MeshBasicMaterial({ color: 0x9DF7BB });
-      const satA = new THREE.Mesh(satGeo, satMat);
-      ringA.add(satA); satA.position.set(2.35, 0, 0);
-
-      const satB = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 12), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-      ringB.add(satB); satB.position.set(0, 2.85, 0);
-
-      // 5. Floating 3D Polyhedra & Wire Cubes
-      const shards = [];
-      const shardGeo = new THREE.BoxGeometry(0.38, 0.38, 0.38);
-      const shardMat = new THREE.MeshBasicMaterial({
-        color: 0x9DF7BB,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.4
-      });
-      const shardPositions = [
-        [-3.2, 1.8, -1.2],
-        [3.0, -1.6, -0.8],
-        [-2.4, -2.1, 0.8],
-        [2.6, 2.2, 0.5]
-      ];
-      shardPositions.forEach(pos => {
-        const sh = new THREE.Mesh(shardGeo, shardMat);
-        sh.position.set(...pos);
-        sh.userData = {
-          rx: (Math.random() - 0.5) * 0.02,
-          ry: (Math.random() - 0.5) * 0.02,
-          rz: (Math.random() - 0.5) * 0.02
-        };
-        modelRoot.add(sh);
-        shards.push(sh);
+      // Nested Hypercube / Tesseract Frame
+      const hypercubeGroup = new THREE.Group();
+      const hcOuter = new THREE.Mesh(new THREE.BoxGeometry(3.0, 3.0, 3.0), darkBodyMat);
+      const hcOuterLines = new THREE.LineSegments(new THREE.EdgesGeometry(hcOuter.geometry), edgeMintMat);
+      const hcInner = new THREE.Mesh(new THREE.OctahedronGeometry(1.6, 0), glassBodyMat);
+      const hcInnerLines = new THREE.LineSegments(new THREE.EdgesGeometry(hcInner.geometry), edgeWhiteMat);
+      hypercubeGroup.add(hcOuter, hcOuterLines, hcInner, hcInnerLines);
+      hypercubeGroup.position.set(5.2, -2.0, -58);
+      scene.add(hypercubeGroup);
+      structures.push({
+        group: hypercubeGroup,
+        baseY: -2.0,
+        rx: 0.005, ry: -0.007, rz: 0.003,
+        amp: 0.4, f: 1.05,
+        phase: 1.2
       });
 
-      // 6. Synchronized Morphing 3D Particle System
-      // 1800 particles smoothly morphing between 5 distinct geometric shapes & features across scroll
-      const pCount = 1800;
-      const pGeo = new THREE.BufferGeometry();
-      const pPos = new Float32Array(pCount * 3);
-      const pCols = new Float32Array(pCount * 3);
+      // Floating Tech Slabs / Monolith Wafers
+      addStructure(
+        new THREE.BoxGeometry(4.6, 0.3, 2.4),
+        darkBodyMat, edgeSubtleMat,
+        [-5.8, -2.6, -68], [0.35, 0.2, -0.15], [-0.002, 0.004, 0.002], 0.35, 0.85
+      );
+      addStructure(
+        new THREE.BoxGeometry(3.8, 0.26, 2.2),
+        glassBodyMat, edgeMintMat,
+        [5.0, 3.0, -48], [-0.2, -0.35, 0.1], [0.003, -0.003, 0.004], 0.3, 1.15
+      );
 
-      // Create soft glowing circular particle sprite
+      // -------------------------------------------------------------
+      // 3. WAYPOINT 3: ABOUT / CORE ARCHITECTURE (Z: -85 to -125)
+      // -------------------------------------------------------------
+      // Sequential Cyberspace Ring Gate 1 (Camera flies right through its aperture!)
+      addStructure(
+        new THREE.TorusGeometry(6.6, 0.25, 16, 72),
+        darkBodyMat, edgeMintMat,
+        [0, 0, -92], [0.28, 0.15, -0.1], [0.001, 0.0018, -0.0008], 0.25, 0.75
+      );
+
+      // Gyroscope Satellite (3 Interlocking Gimbal Rings)
+      const gyroGroup = new THREE.Group();
+      const gR1 = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.06, 12, 48), darkBodyMat);
+      const gL1 = new THREE.LineSegments(new THREE.EdgesGeometry(gR1.geometry), edgeMintMat);
+      const gR2 = new THREE.Mesh(new THREE.TorusGeometry(1.8, 0.06, 12, 48), darkBodyMat);
+      gR2.rotation.x = Math.PI / 2;
+      const gL2 = new THREE.LineSegments(new THREE.EdgesGeometry(gR2.geometry), edgeWhiteMat);
+      const gR3 = new THREE.Mesh(new THREE.OctahedronGeometry(0.9, 0), glassBodyMat);
+      const gL3 = new THREE.LineSegments(new THREE.EdgesGeometry(gR3.geometry), edgeMintMat);
+      gyroGroup.add(gR1, gL1, gR2, gL2, gR3, gL3);
+      gyroGroup.position.set(-6.2, 2.8, -106);
+      scene.add(gyroGroup);
+      structures.push({
+        group: gyroGroup,
+        baseY: 2.8,
+        rx: 0.008, ry: 0.012, rz: -0.005,
+        amp: 0.45, f: 1.1,
+        phase: 2.3
+      });
+
+      // Sequential Cyberspace Ring Gate 2 (Camera zooms through the second ring!)
+      addStructure(
+        new THREE.TorusGeometry(6.2, 0.24, 16, 72),
+        darkBodyMat, edgeMintMat,
+        [0.4, -0.3, -118], [-0.22, -0.18, 0.25], [-0.0012, 0.002, 0.001], 0.25, 0.8
+      );
+
+      // Slender Data Monolith Column
+      addStructure(
+        new THREE.BoxGeometry(1.0, 7.5, 1.0),
+        darkBodyMat, edgeSubtleMat,
+        [6.8, -0.8, -112], [0.1, -0.2, 0.15], [0.002, 0.003, -0.001], 0.4, 0.9
+      );
+
+      // -------------------------------------------------------------
+      // 4. WAYPOINT 4: JOURNEY / QUANTUM LATTICE (Z: -135 to -175)
+      // -------------------------------------------------------------
+      // Geodesic 20-sided Sphere
+      addStructure(
+        new THREE.IcosahedronGeometry(3.0, 1),
+        darkBodyMat, edgeMintMat,
+        [4.8, 2.0, -145], [0.2, 0.1, -0.3], [0.004, -0.005, 0.002], 0.4, 0.9
+      );
+
+      // Open Modular Lattice Corridor Frame
+      addStructure(
+        new THREE.BoxGeometry(6.2, 6.2, 1.4),
+        darkBodyMat, edgeMintMat,
+        [-0.2, 0, -160], [0, 0, Math.PI / 4], [0.0008, 0.001, 0.0015], 0.2, 0.7
+      );
+
+      // Floating Hexagonal Prism
+      addStructure(
+        new THREE.CylinderGeometry(2.0, 2.0, 1.0, 6),
+        glassBodyMat, edgeMintMat,
+        [-5.2, -2.4, -168], [0.4, -0.2, 0.3], [0.004, 0.005, -0.003], 0.35, 1.05
+      );
+
+      // Precision Diamond Bipyramid
+      addStructure(
+        new THREE.OctahedronGeometry(2.2, 0),
+        darkBodyMat, edgeWhiteMat,
+        [5.4, -2.6, -172], [-0.3, 0.4, 0.1], [-0.003, 0.004, 0.002], 0.35, 1.1
+      );
+
+      // -------------------------------------------------------------
+      // 5. WAYPOINT 5: HORIZON / EVENT HORIZON TERMINUS (Z: -185 to -225)
+      // -------------------------------------------------------------
+      // Grand Infinity Horizon Beacon
+      addStructure(
+        new THREE.TorusGeometry(7.8, 0.3, 16, 80),
+        darkBodyMat, edgeMintMat,
+        [0, 0, -208], [0, 0, 0], [0.0008, 0.0012, 0.001], 0.2, 0.6
+      );
+
+      // Twin Architectural Horizon Pylons
+      addStructure(
+        new THREE.BoxGeometry(0.9, 10.0, 0.9),
+        darkBodyMat, edgeMintMat,
+        [-7.2, 0, -200], [0, 0.1, 0.05], [0.001, 0.002, 0], 0.2, 0.7
+      );
+      addStructure(
+        new THREE.BoxGeometry(0.9, 10.0, 0.9),
+        darkBodyMat, edgeMintMat,
+        [7.2, 0, -200], [0, -0.1, -0.05], [-0.001, 0.002, 0], 0.2, 0.7
+      );
+
+      // Focal Core Beacon Diamond
+      addStructure(
+        new THREE.OctahedronGeometry(1.8, 0),
+        glassBodyMat, edgeMintMat,
+        [0, 0, -214], [0.2, 0.3, 0.1], [0.007, 0.01, 0.004], 0.3, 1.2
+      );
+
+      // -------------------------------------------------------------
+      // 6. DEPTH TUNNEL STARDUST & CINEMATIC SPEED PARTICLES
+      // -------------------------------------------------------------
+      const starCount = 1800;
+      const starGeo = new THREE.BufferGeometry();
+      const starPos = new Float32Array(starCount * 3);
+      const starDrift = new Float32Array(starCount * 3);
+      const starCols = new Float32Array(starCount * 3);
+
+      // Circular glowing particle texture
       const createParticleSprite = () => {
         const sc = document.createElement('canvas');
         sc.width = 64; sc.height = 64;
         const sctx = sc.getContext('2d');
         const gr = sctx.createRadialGradient(32, 32, 0, 32, 32, 32);
         gr.addColorStop(0, 'rgba(255, 255, 255, 1)');
-        gr.addColorStop(0.2, 'rgba(157, 247, 187, 0.9)');
-        gr.addColorStop(0.5, 'rgba(157, 247, 187, 0.3)');
+        gr.addColorStop(0.2, 'rgba(157, 247, 187, 0.95)');
+        gr.addColorStop(0.5, 'rgba(157, 247, 187, 0.35)');
         gr.addColorStop(1, 'rgba(0, 0, 0, 0)');
         sctx.fillStyle = gr;
         sctx.fillRect(0, 0, 64, 64);
@@ -256,181 +420,41 @@
         return tex;
       };
 
-      // Generate 5 Distinct Target 3D Shapes
-      const shapes = [
-        new Float32Array(pCount * 3), // 0: Fibonacci Neural Sphere
-        new Float32Array(pCount * 3), // 1: 3D Quantized Matrix Hypercube
-        new Float32Array(pCount * 3), // 2: Toroidal Vortex Loop
-        new Float32Array(pCount * 3), // 3: Synaptic Double Helix Waveform
-        new Float32Array(pCount * 3)  // 4: Cosmic Concentric Portal Beacon
-      ];
+      for (let i = 0; i < starCount; i++) {
+        const i3 = i * 3;
+        starPos[i3] = (Math.random() - 0.5) * 44;     // X: -22 to 22
+        starPos[i3 + 1] = (Math.random() - 0.5) * 32; // Y: -16 to 16
+        starPos[i3 + 2] = 20 - Math.random() * 245;  // Z: 20 to -225
 
-      // Generate 5 Matching Color Palettes (R, G, B)
-      const colorPalettes = [
-        new Float32Array(pCount * 3), // 0: Mint & Diamond White
-        new Float32Array(pCount * 3), // 1: Emerald & Cyan Data Matrix
-        new Float32Array(pCount * 3), // 2: Gradient Mint & Soft Lavender
-        new Float32Array(pCount * 3), // 3: Dual Strand Mint & Violet
-        new Float32Array(pCount * 3)  // 4: Radiant Gold-White & Electric Mint
-      ];
+        starDrift[i3] = (Math.random() - 0.5) * 0.015;
+        starDrift[i3 + 1] = (Math.random() - 0.5) * 0.015;
+        starDrift[i3 + 2] = (Math.random() - 0.5) * 0.02;
 
-      // Shape 0: Fibonacci Neural Sphere & Halo Corona (Hero)
-      for (let i = 0; i < pCount; i++) {
-        const y = 1 - (i / (pCount - 1)) * 2;
-        const r = Math.sqrt(1 - y * y);
-        const phi = i * 2.399963229728653;
-        const isCore = i < pCount * 0.42;
-        const radius = isCore ? (1.55 + (i % 7) * 0.04) : (3.2 + (i % 13) * 0.07);
-        shapes[0][i * 3] = Math.cos(phi) * r * radius;
-        shapes[0][i * 3 + 1] = y * radius;
-        shapes[0][i * 3 + 2] = Math.sin(phi) * r * radius;
-
-        if (isCore) {
-          colorPalettes[0][i * 3] = 0.61;     // R
-          colorPalettes[0][i * 3 + 1] = 0.97; // G
-          colorPalettes[0][i * 3 + 2] = 0.73; // B
+        if (i % 3 === 0) {
+          starCols[i3] = 0.62; starCols[i3 + 1] = 0.98; starCols[i3 + 2] = 0.74; // Electric Mint
+        } else if (i % 3 === 1) {
+          starCols[i3] = 0.98; starCols[i3 + 1] = 1.0; starCols[i3 + 2] = 0.98;  // Diamond White
         } else {
-          colorPalettes[0][i * 3] = 0.92;
-          colorPalettes[0][i * 3 + 1] = 0.98;
-          colorPalettes[0][i * 3 + 2] = 0.94;
+          starCols[i3] = 0.40; starCols[i3 + 1] = 0.92; starCols[i3 + 2] = 0.85; // Aquamarine
         }
       }
 
-      // Shape 1: 3D Quantized Matrix Hypercube Lattice (About / Stats & Mission)
-      const kDim = 12;
-      for (let i = 0; i < pCount; i++) {
-        const ix = i % kDim;
-        const iy = Math.floor(i / kDim) % kDim;
-        const iz = Math.floor(i / (kDim * kDim)) % kDim;
-        const L = 3.6;
-        shapes[1][i * 3] = (ix / (kDim - 1) - 0.5) * L + ((i % 5) - 2) * 0.04;
-        shapes[1][i * 3 + 1] = (iy / (kDim - 1) - 0.5) * L + ((i % 7) - 3) * 0.04;
-        shapes[1][i * 3 + 2] = (iz / (kDim - 1) - 0.5) * L + ((i % 3) - 1) * 0.04;
+      starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+      starGeo.setAttribute('color', new THREE.BufferAttribute(starCols, 3));
 
-        if (i % 2 === 0) {
-          colorPalettes[1][i * 3] = 0.22;
-          colorPalettes[1][i * 3 + 1] = 0.75;
-          colorPalettes[1][i * 3 + 2] = 0.38;
-        } else {
-          colorPalettes[1][i * 3] = 0.32;
-          colorPalettes[1][i * 3 + 1] = 0.88;
-          colorPalettes[1][i * 3 + 2] = 0.82;
-        }
-      }
-
-      // Shape 2: Toroidal Vortex Loop (Pillars & Development Workflow)
-      for (let i = 0; i < pCount; i++) {
-        const u = (i / pCount) * Math.PI * 8;
-        const v = (i / pCount) * Math.PI * 2;
-        const R = 2.85;
-        const tr = 0.88 + (i % 9) * 0.05;
-        shapes[2][i * 3] = (R + tr * Math.cos(u)) * Math.cos(v);
-        shapes[2][i * 3 + 1] = tr * Math.sin(u);
-        shapes[2][i * 3 + 2] = (R + tr * Math.cos(u)) * Math.sin(v);
-
-        const mixRatio = (Math.sin(v) + 1) * 0.5;
-        colorPalettes[2][i * 3] = 0.61 * (1 - mixRatio) + 0.79 * mixRatio;
-        colorPalettes[2][i * 3 + 1] = 0.97 * (1 - mixRatio) + 0.72 * mixRatio;
-        colorPalettes[2][i * 3 + 2] = 0.73 * (1 - mixRatio) + 1.00 * mixRatio;
-      }
-
-      // Shape 3: Synaptic Double Helix Waveform (Selected Work / Deep Learning)
-      for (let i = 0; i < pCount; i++) {
-        const s = i % 2;
-        const isBridge = i % 5 === 0;
-        const t = (i / pCount) * 2 - 1;
-        const rad = 1.65;
-        const theta = t * Math.PI * 5 + s * Math.PI;
-
-        if (isBridge) {
-          // Horizontal synaptic rung connecting the two strands
-          const bridgeFrac = (i % 15) / 15;
-          shapes[3][i * 3] = Math.cos(theta) * rad * (1 - bridgeFrac * 2);
-          shapes[3][i * 3 + 1] = t * 3.6;
-          shapes[3][i * 3 + 2] = Math.sin(theta) * rad * (1 - bridgeFrac * 2);
-
-          colorPalettes[3][i * 3] = 0.95;
-          colorPalettes[3][i * 3 + 1] = 0.98;
-          colorPalettes[3][i * 3 + 2] = 0.95;
-        } else {
-          shapes[3][i * 3] = Math.cos(theta) * rad;
-          shapes[3][i * 3 + 1] = t * 3.6;
-          shapes[3][i * 3 + 2] = Math.sin(theta) * rad;
-
-          if (s === 0) {
-            colorPalettes[3][i * 3] = 0.61;
-            colorPalettes[3][i * 3 + 1] = 0.97;
-            colorPalettes[3][i * 3 + 2] = 0.73;
-          } else {
-            colorPalettes[3][i * 3] = 0.76;
-            colorPalettes[3][i * 3 + 1] = 0.64;
-            colorPalettes[3][i * 3 + 2] = 0.98;
-          }
-        }
-      }
-
-      // Shape 4: Cosmic Concentric Portal Beacon (Let's Talk CTA)
-      for (let i = 0; i < pCount; i++) {
-        const m = i % 7;
-        const r = 0.65 + m * 0.52;
-        const a = (i / pCount) * Math.PI * 14;
-        shapes[4][i * 3] = r * Math.cos(a);
-        shapes[4][i * 3 + 1] = r * Math.sin(a);
-        shapes[4][i * 3 + 2] = (m - 3) * 0.45 + Math.sin(a * 4) * 0.15;
-
-        if (m <= 2) {
-          colorPalettes[4][i * 3] = 1.0;
-          colorPalettes[4][i * 3 + 1] = 0.96;
-          colorPalettes[4][i * 3 + 2] = 0.88;
-        } else {
-          colorPalettes[4][i * 3] = 0.62;
-          colorPalettes[4][i * 3 + 1] = 0.98;
-          colorPalettes[4][i * 3 + 2] = 0.75;
-        }
-      }
-
-      // Initialize buffer with Shape 0
-      for (let i = 0; i < pCount * 3; i++) {
-        pPos[i] = shapes[0][i];
-        pCols[i] = colorPalettes[0][i];
-      }
-
-      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-      pGeo.setAttribute('color', new THREE.BufferAttribute(pCols, 3));
-
-      const pMat = new THREE.PointsMaterial({
-        size: 0.052,
+      const starMat = new THREE.PointsMaterial({
+        size: 1.85,
         map: createParticleSprite(),
-        vertexColors: true,
         transparent: true,
-        opacity: 0.85,
+        opacity: 0.92,
+        vertexColors: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       });
-      const particles = new THREE.Points(pGeo, pMat);
-      modelRoot.add(particles);
+      const starPoints = new THREE.Points(starGeo, starMat);
+      scene.add(starPoints);
 
-      // 7. Lighting
-      const ambientLight = new THREE.AmbientLight(0x0a140e, 1.2);
-      scene.add(ambientLight);
-
-      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      dirLight.position.set(4, 5, 4);
-      scene.add(dirLight);
-
-      const mintLight = new THREE.PointLight(0x9DF7BB, 3.2, 15);
-      mintLight.position.set(-3, 2, 3);
-      scene.add(mintLight);
-
-      const lavLight = new THREE.PointLight(0xC9B8FF, 2.5, 15);
-      lavLight.position.set(3, -2, -2);
-      scene.add(lavLight);
-
-      const cursorLight = new THREE.PointLight(0x9DF7BB, 1.8, 10);
-      cursorLight.position.set(0, 0, 3);
-      scene.add(cursorLight);
-
-      // Resize handler
+      // Resize listener
       const onResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -438,7 +462,7 @@
       };
       window.addEventListener('resize', onResize);
 
-      // Frame updater with synchronized particle morphing across scroll
+      // Frame updater: Camera flies forward deep inside 3D space with scroll
       let time = 0;
       update3DScene = (p, dt = 0.016) => {
         time += dt;
@@ -447,110 +471,57 @@
         mouse.x += (mouse.targetX - mouse.x) * 0.06;
         mouse.y += (mouse.targetY - mouse.y) * 0.06;
 
-        cursorLight.position.set(mouse.x * 4, mouse.y * 3, 3.2);
-
         if (!reduce) {
-          // Model rotation & drift synchronized with scroll
-          coreGroup.rotation.y = time * 0.22 + p * 2.0;
-          coreGroup.rotation.x = Math.sin(time * 0.3) * 0.12 + p * 0.7;
+          // 1. Camera depth flight ("zooming in / going inside" as you scroll down)
+          const zStart = 16.0;
+          const zEnd = -215.0;
+          const targetZ = zStart + p * (zEnd - zStart);
+          camera.position.z += (targetZ - camera.position.z) * 0.075;
 
-          nucleus.rotation.y = -time * 0.45;
-          nucleus.rotation.z = time * 0.3;
-          const pulse = 1 + Math.sin(time * 3.0) * 0.08;
-          nucleus.scale.set(pulse, pulse, pulse);
+          // 2. Cinematic spline flight curve (organic drone banking & panning)
+          const curveX = Math.sin(p * Math.PI * 2.2) * 3.4 + (mouse.x * 2.2);
+          const curveY = Math.cos(p * Math.PI * 1.8) * 1.8 + (mouse.y * 1.5);
+          camera.position.x += (curveX - camera.position.x) * 0.055;
+          camera.position.y += (curveY - camera.position.y) * 0.055;
 
-          ringA.rotation.z = -22 * Math.PI / 180 + time * 0.28 + p * 2.1;
-          ringB.rotation.x = 18 * Math.PI / 180 + time * 0.22 + p * 1.7;
-          ringC.rotation.y = 55 * Math.PI / 180 - time * 0.32 - p * 1.9;
+          // 3. Dynamic forward look-at target
+          lookTarget.set(
+            camera.position.x * 0.4,
+            camera.position.y * 0.4,
+            camera.position.z - 30.0
+          );
+          camera.lookAt(lookTarget);
 
-          shards.forEach(sh => {
-            sh.rotation.x += sh.userData.rx;
-            sh.rotation.y += sh.userData.ry;
-            sh.rotation.z += sh.userData.rz;
+          // 4. Subtle camera roll / banking
+          camera.rotation.z = Math.sin(p * Math.PI * 2.2) * 0.04 - (mouse.x * 0.03);
+
+          // 5. Headlight follows camera position
+          camLight.position.copy(camera.position);
+
+          // 6. Rotate and bob floating structures
+          structures.forEach(st => {
+            st.group.rotation.x += st.rx;
+            st.group.rotation.y += st.ry;
+            st.group.rotation.z += st.rz;
+            st.group.position.y = st.baseY + Math.sin(time * st.f + st.phase) * st.amp;
           });
 
-          // Calculate 4-segment scroll transition [0..1] -> [0..4]
-          const seg = Math.min(3.9999, Math.max(0, p * 4));
-          const idx = Math.floor(seg);
-          const localT = seg - idx;
-          const easeT = localT * localT * (3 - 2 * localT); // Smooth Hermite S-curve
-
-          const curShape = shapes[idx];
-          const nextShape = shapes[idx + 1];
-          const curCol = colorPalettes[idx];
-          const nextCol = colorPalettes[idx + 1];
-
-          // Mouse coords in 3D for interactive repulsion ripple
-          const mx3 = mouse.x * 3.6;
-          const my3 = mouse.y * 2.8;
-
-          const posArr = pGeo.attributes.position.array;
-          const colArr = pGeo.attributes.color.array;
-
-          for (let i = 0; i < pCount; i++) {
+          // 7. Update and wrap stardust particles relative to moving camera
+          const pArr = starGeo.attributes.position.array;
+          const camZ = camera.position.z;
+          for (let i = 0; i < starCount; i++) {
             const i3 = i * 3;
-            // Base interpolation between shapes
-            let x = curShape[i3] + (nextShape[i3] - curShape[i3]) * easeT;
-            let y = curShape[i3 + 1] + (nextShape[i3 + 1] - curShape[i3 + 1]) * easeT;
-            let z = curShape[i3 + 2] + (nextShape[i3 + 2] - curShape[i3 + 2]) * easeT;
+            pArr[i3] += starDrift[i3];
+            pArr[i3 + 1] += starDrift[i3 + 1];
 
-            // Synchronized feature dynamics based on segment
-            if (idx === 0) {
-              // Neural Sphere: Organic breathing pulse
-              const pulseS = Math.sin(time * 2.4 + i * 0.08) * 0.07;
-              x += x * pulseS;
-              y += y * pulseS;
-              z += z * pulseS;
-            } else if (idx === 1) {
-              // Hypercube Grid: Quantized matrix ripples
-              const waveC = Math.sin(time * 3.4 + x * 1.6) * 0.06;
-              y += waveC;
-              z += Math.cos(time * 2.8 + y * 1.4) * 0.04;
-            } else if (idx === 2) {
-              // Toroidal Vortex: Flowing stream circulation
-              const rotAngle = time * 0.35 + (i / pCount) * Math.PI * 0.6;
-              const cosA = Math.cos(rotAngle);
-              const sinA = Math.sin(rotAngle);
-              const nx = x * cosA - z * sinA;
-              const nz = x * sinA + z * cosA;
-              x = nx;
-              z = nz;
-            } else if (idx === 3) {
-              // Double Helix: Twisting vibration & harmonic oscillation
-              const waveH = Math.cos(time * 2.6 + y * 1.4) * 0.08;
-              x += waveH;
-              z += Math.sin(time * 2.6 + y * 1.4) * 0.08;
+            // Wrap particles that fall behind or too far ahead of camera
+            if (pArr[i3 + 2] > camZ + 8) {
+              pArr[i3 + 2] -= 245;
+            } else if (pArr[i3 + 2] < camZ - 237) {
+              pArr[i3 + 2] += 245;
             }
-
-            // Interactive mouse repulsion field
-            const dx = x - mx3;
-            const dy = y - my3;
-            const distSq = dx * dx + dy * dy;
-            if (distSq < 2.8) {
-              const repel = (1 - Math.sqrt(distSq) / 1.67) * 0.42;
-              x += dx * repel;
-              y += dy * repel;
-            }
-
-            posArr[i3] = x;
-            posArr[i3 + 1] = y;
-            posArr[i3 + 2] = z;
-
-            // Smooth color morphing across scroll
-            colArr[i3] = curCol[i3] + (nextCol[i3] - curCol[i3]) * easeT;
-            colArr[i3 + 1] = curCol[i3 + 1] + (nextCol[i3 + 1] - curCol[i3 + 1]) * easeT;
-            colArr[i3 + 2] = curCol[i3 + 2] + (nextCol[i3 + 2] - curCol[i3 + 2]) * easeT;
           }
-
-          pGeo.attributes.position.needsUpdate = true;
-          pGeo.attributes.color.needsUpdate = true;
-
-          // Parallax & scroll camera track
-          modelRoot.rotation.y = mouse.x * 0.38;
-          modelRoot.rotation.x = -mouse.y * 0.28;
-          modelRoot.position.y = -p * 2.2 + (Math.sin(p * Math.PI) * 0.4);
-          modelRoot.position.x = Math.sin(p * Math.PI * 1.2) * 0.9;
-          camera.position.z = 7.2 + p * 1.6;
+          starGeo.attributes.position.needsUpdate = true;
         }
 
         renderer.render(scene, camera);
@@ -614,32 +585,6 @@
     // 1. If WebGL 3D scene is active, render it
     if (hasThree3D && update3DScene) {
       update3DScene(p, dt);
-    }
-    // 2. Video scrub fallback
-    else if (stage.classList.contains('has-video') && video && video.duration) {
-      const t = Math.min(video.duration - 0.05, p * video.duration);
-      if (Math.abs(video.currentTime - t) > 0.03) {
-        video.currentTime = t;
-      }
-    }
-    // 3. Robust procedural CSS 3D fallback
-    else if (!reduce) {
-      gsap.set('.o1', { y: p * -240, scale: 1 + p * 0.8 });
-      gsap.set('.o2', { y: p * -480, x: p * 110 });
-      gsap.set('.o3', { y: p * 340, x: p * -140 });
-      gsap.set('.s1', { y: p * 280, rotate: -14 + p * 45 });
-      gsap.set('.s2', { y: p * -380, rotate: 12 - p * 55 });
-
-      // Camera drift on parent wrappers so CSS keyframes aren't wiped out
-      gsap.set('.motion-world', {
-        rotationY: (p - 0.5) * 8,
-        rotationX: (0.5 - p) * 5,
-        scale: 1 + p * 0.06,
-        transformOrigin: '50% 50%'
-      });
-      gsap.set('.core-wrap', { y: p * -32 });
-      gsap.set('.cube-wrap-a', { x: p * -60, y: p * 40 });
-      gsap.set('.cube-wrap-b', { x: p * 50, y: p * -60 });
     }
   };
   gsap.ticker.add(draw);

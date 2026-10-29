@@ -25,24 +25,9 @@
 <div class="cursor" id="cursor" aria-hidden="true"><i></i><b></b></div>
 <div class="progress" id="progress" aria-hidden="true"></div>
 
-<!-- Fixed cinematic stage: 3D WebGL model, scrubbed video, or procedural CSS 3D fallback -->
+<!-- Fixed cinematic 3D fly-through stage -->
 <div class="stage" aria-hidden="true">
-  <video id="hero-video" muted playsinline preload="none" poster="assets/video/poster.webp"></video>
   <canvas id="frames" class="stage-canvas"></canvas>
-  <div class="glass-fallback" id="fallback">
-    <div class="motion-world" id="motion-world">
-      <div class="orbit-wrap orbit-wrap-a"><div class="orbit orbit-a"><i></i></div></div>
-      <div class="orbit-wrap orbit-wrap-b"><div class="orbit orbit-b"><i></i></div></div>
-      <div class="orbit-wrap orbit-wrap-c"><div class="orbit orbit-c"><i></i></div></div>
-      <div class="core-wrap"><div class="core"><span class="core-inner"></span><span class="core-glint"></span></div></div>
-      <div class="cube-wrap cube-wrap-a"><div class="wire-cube cube-a"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-      <div class="cube-wrap cube-wrap-b"><div class="wire-cube cube-b"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-      <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
-      <span class="shard s1"></span><span class="shard s2"></span>
-      <span class="motion-label label-a">AI systems</span><span class="motion-label label-b">Build, iterate, ship</span>
-      <div class="particle-field" aria-hidden="true"></div>
-    </div>
-  </div>
   <div class="vignette"></div>
 </div>
 
