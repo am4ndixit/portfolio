@@ -425,6 +425,15 @@ h1 em{font-family:var(--display);font-weight:400;font-style:italic;letter-spacin
 .sk-box{display:none!important}
 nav{position:sticky;top:max(12px,env(safe-area-inset-top,0px));z-index:30;margin-top:18px;padding:10px 24px;border-radius:99px}
 .arch{margin:18px 0;padding:14px;border:1px solid rgba(255,255,255,.12);border-radius:14px}.arch figcaption{color:var(--mute);font-size:13px;margin-bottom:8px}.at{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.at b{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);width:100%}.at span{border:1px solid rgba(143,179,255,.35);border-radius:8px;padding:4px 10px;font-size:13px;background:rgba(70,104,214,.1)}.ar{text-align:center;color:var(--blue);margin:2px 0}
+.lead{max-width:780px;line-height:1.65;font-size:17px;margin:0 0 22px}.lead code{font-size:14px}.fps a{color:var(--blue)}.fps .btn{color:inherit}
+.skc,.prc{border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:20px;background:rgba(255,255,255,.03);backdrop-filter:blur(14px)}.skc h3,.prc h3{font-family:var(--display);font-weight:400;font-size:24px;margin:0 0 8px}.skc ul{margin:0;padding-left:18px;line-height:1.8}
+.prc{display:flex;flex-direction:column;gap:6px}.prc p{margin:0;font-size:14.5px;line-height:1.5}.pr-h{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.pr-h b{font-family:'JetBrains Mono',monospace;color:var(--blue)}.pr-st{margin-left:auto;font-size:12px;color:var(--mute)}.pr-l{margin-top:auto!important;padding-top:6px}
+#contributions .fp-grid{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.navlinks{align-items:center}.navlinks .nic{display:inline-flex;width:34px;height:34px;align-items:center;justify-content:center;border-radius:50%;padding:0;color:var(--mute);transition:color .2s,background .2s,transform .2s}
+.navlinks .nic svg{width:19px;height:19px}.navlinks .nic:hover{color:var(--ink);background:rgba(143,179,255,.14);transform:translateY(-2px)}.navlinks .gm:hover{color:#ea4335}.navlinks .lni:hover{color:#6aa5ff}
+.navlinks .sep{width:1px;height:22px;background:rgba(255,255,255,.18)}.navlinks .nst{display:inline-flex;padding:0 0 0 2px}.navlinks .nst img{height:26px;width:auto;display:block;opacity:.92}.navlinks .nst .ne{display:none}
+.navlinks a:not(.nic):not(.nst):hover{color:var(--ink)}
+@media(max-width:640px){nav{gap:6px;padding:8px 10px}.brand{font-size:18px!important;gap:0}.navlinks{gap:5px!important;font-size:16px!important;min-width:0}.navlinks a:not(.nic):not(.nst),.navlinks button{padding:4px 3px}.navlinks .nic svg{width:16px;height:16px}.navlinks .nst img{height:20px}.navlinks .nst .nf{display:none}.navlinks .nst .ne{display:block}.navlinks .sep{display:none}.navlinks .nic{width:24px;height:24px}.brand{font-size:22px}.brand i{display:none}}
 .fps{padding:8px 0 48px}.fps h2{font-family:var(--display);font-weight:400;font-size:clamp(34px,5vw,56px);margin:0 0 8px}.fps h2 em{color:var(--blue)}
 .fp-note{color:var(--mute);margin:0 0 24px}.fp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
 .fp{border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:22px;background:rgba(255,255,255,.03);backdrop-filter:blur(14px);display:flex;flex-direction:column;gap:8px}
@@ -566,39 +575,49 @@ nav{position:sticky;top:max(12px,env(safe-area-inset-top,0px));z-index:30;margin
 .n7 .pxcap{position:absolute;left:0;right:0;bottom:6px;text-align:center;font:400 12px/1.6 'Press Start 2P',monospace;color:#8fb3ff;text-shadow:2px 2px 0 #1b2a6b;letter-spacing:.06em}
 .n7 .pxcap span{color:#6d7692;font-size:9px;display:block;margin-top:4px}
 
-/* ---------- github contributions (liquid glass) ---------- */
-.gh{padding:10px 0 30px}
-.ghcard{--cell:13px;--gap:4px;position:relative;isolation:isolate;overflow:hidden;border-radius:40px;padding:30px 32px 26px;
-  background:radial-gradient(120% 70% at 50% 122%,rgba(96,136,255,.85),rgba(54,84,210,.38) 36%,transparent 66%),linear-gradient(180deg,#05060b,#04050a 60%,#070a18);
-  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(255,255,255,.12),inset 1.5px 0 0 rgba(255,255,255,.18),inset -1.5px 0 0 rgba(255,255,255,.1),inset 0 0 50px rgba(255,255,255,.04),0 50px 90px -40px rgba(70,104,214,.55),0 20px 40px -20px #000}
-.ghcard::before{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;opacity:0;transition:opacity .4s;background:radial-gradient(260px circle at var(--gx,50%) var(--gy,-30%),rgba(255,255,255,.2),transparent 62%)}
-.ghcard:hover::before{opacity:1}
-.ghcard::after{content:"";position:absolute;top:-30%;bottom:-30%;width:26%;left:-40%;z-index:0;pointer-events:none;transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);animation:gloss 9s ease-in-out infinite}
-@keyframes gloss{0%,55%{left:-40%}100%{left:130%}}
-.ghcard>*{position:relative;z-index:1}
-.gh-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px}
-.gh-ic{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.04));box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 24px rgba(120,160,255,.35);text-decoration:none;transition:transform .25s,box-shadow .25s}
-.gh-ic:hover{transform:scale(1.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 0 34px rgba(150,190,255,.7)}
-.gh-ic svg{width:28px;height:28px;fill:#fff}
-.gh-t{flex:1;min-width:150px}
-.gh-t b{display:block;font-family:var(--hand);font-size:34px;line-height:1;font-weight:600}
-.gh-t small{color:var(--mute);font-size:13px}
-.gh-total{font:600 clamp(40px,6vw,64px)/1 var(--body);letter-spacing:-.05em;color:#fff}
-.gh-scroll{overflow-x:auto;padding:6px 4px 10px;scrollbar-width:thin;scrollbar-color:#2a3558 transparent}
-.gh-inner{position:relative;width:max-content;padding-top:0}
-.gh-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,var(--cell));grid-auto-columns:var(--cell);gap:var(--gap)}
-.gh-grid .c{--gc:rgba(255,255,255,.06);display:block;width:var(--cell);height:var(--cell);padding:0;border:0;border-radius:4px;background:var(--gc);cursor:pointer;transition:background-color .9s ease calc(var(--w)*16ms),box-shadow .9s ease calc(var(--w)*16ms),transform .25s}
-.gh-grid .c.e{visibility:hidden;pointer-events:none}
-.gh-grid .c:not(.e):hover,.gh-grid .c:not(.e):focus-visible{transform:scale(1.5);z-index:2;outline:1.5px solid #fff;outline-offset:1px}
-.gh-grid [data-l="0"]{--gc:#161b22}
-.gh-grid [data-l="1"]{--gc:#0e4429}.gh-grid [data-l="2"]{--gc:#006d32}.gh-grid [data-l="3"]{--gc:#26a641}.gh-grid [data-l="4"]{--gc:#39d353}
-.gh-grid.blue [data-l="0"]{--gc:rgba(255,255,255,.07)}
-.gh-grid.blue [data-l="1"]{--gc:#1d2f72}.gh-grid.blue [data-l="2"]{--gc:#2f4ca8}.gh-grid.blue [data-l="3"]{--gc:#5b83f0}
-.gh-grid.blue [data-l="4"]{--gc:#b4cdff;box-shadow:0 0 12px rgba(150,190,255,.9)}
-.gh-tip{position:fixed;z-index:80;pointer-events:none;padding:6px 12px 7px;border-radius:12px;background:rgba(8,10,22,.92);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),0 10px 30px rgba(0,0,0,.6);font-family:var(--hand);font-size:20px;line-height:1.1;color:#e6eeff;opacity:0;transform:translate(-50%,-130%);transition:opacity .15s;white-space:nowrap}
+/* ---------- GitHub contributions: liquid glass ---------- */
+.gh{padding:10px 0 34px}
+.ghc{position:relative;isolation:isolate;overflow:hidden;border-radius:30px;padding:30px 32px 24px;
+  background:var(--glass),rgba(10,12,22,.5);-webkit-backdrop-filter:blur(26px) saturate(1.9) brightness(1.1);backdrop-filter:blur(26px) saturate(1.9) brightness(1.1);
+  box-shadow:var(--edge),0 40px 80px -40px rgba(0,0,0,.9)}
+.ghc::before{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;opacity:0;transition:opacity .4s;background:radial-gradient(320px circle at var(--gx,50%) var(--gy,-30%),rgba(255,255,255,.2),transparent 62%)}
+.ghc:hover::before{opacity:1}
+.ghc::after{content:"";position:absolute;left:-10%;top:-40%;width:60%;height:120%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(110,150,255,.16),transparent);filter:blur(30px);animation:drift 24s ease-in-out infinite alternate}
+.gh-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.gh-top .tag{font-family:var(--hand);color:var(--blue);font-size:28px;line-height:1;display:block;margin-bottom:4px}
+.gh-top h2{margin:0;font-size:clamp(28px,4vw,44px);line-height:1.04;letter-spacing:-.03em;font-weight:600}
+.gh-top h2 em{font-family:var(--display);font-weight:400;font-style:italic;color:var(--blue)}
+.gh-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:22px}
+.gh-stat{padding:12px 16px 13px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(143,179,255,.05)}
+.gh-stat b{display:block;font:italic 400 clamp(30px,4vw,42px)/1 var(--display);color:#eef3ff}
+.gh-stat span{font-family:var(--hand);font-size:21px;color:var(--blue);line-height:1}
+.gh-scroll{overflow-x:auto;padding:4px 2px 8px;scrollbar-width:thin;scrollbar-color:#2a3350 transparent}
+.gh-wrap{position:relative;min-width:max-content;padding:20px 0 0 34px}
+.gh-months{position:absolute;left:34px;top:0;height:16px;width:calc(100% - 34px);font:500 11px/1 var(--body);color:#79819a}
+.gh-months span{position:absolute;top:0;white-space:nowrap}
+.gh-days{position:absolute;left:0;top:20px;display:grid;grid-template-rows:repeat(7,12px);gap:3px;font:500 10px/12px var(--body);color:#79819a}
+.gh-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,12px);grid-auto-columns:12px;gap:3px}
+.gh-grid .c{border-radius:3px;background:rgba(255,255,255,.065);box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)}
+.gh-grid .c.pad{background:none;box-shadow:none}
+.gh-grid .c[data-l="1"],.gh-leg i[data-l="1"]{background:#1d3d98;box-shadow:inset 0 0 0 1px rgba(160,190,255,.18)}
+.gh-grid .c[data-l="2"],.gh-leg i[data-l="2"]{background:#2e62e0;box-shadow:0 0 6px rgba(70,104,214,.6),inset 0 0 0 1px rgba(190,210,255,.25)}
+.gh-grid .c[data-l="3"],.gh-leg i[data-l="3"]{background:#5d90ff;box-shadow:0 0 9px rgba(110,150,255,.75),inset 0 0 0 1px rgba(220,232,255,.35)}
+.gh-grid .c[data-l="4"],.gh-leg i[data-l="4"]{background:#b9d2ff;box-shadow:0 0 14px rgba(170,205,255,.95),inset 0 0 0 1px rgba(255,255,255,.6)}
+.gh-grid .c:not(.x):hover{outline:1.5px solid #fff;outline-offset:1px}
+.ghc:not(.in) .gh-grid .c{opacity:0;transform:scale(.3)}
+.ghc.in .gh-grid .c{animation:cpop .7s cubic-bezier(.2,.9,.3,1.35) both;animation-delay:var(--dl,0ms)}
+@keyframes cpop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+.gh-grid.loading .c{animation:shim 1.8s ease-in-out infinite!important;animation-delay:var(--dl,0ms)!important}
+@keyframes shim{0%,100%{opacity:.35}50%{opacity:1}}
+.gh-foot{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:12px;font:400 13px/1.4 var(--body);color:#79819a}
+.gh-foot a{color:var(--blue)}
+.gh-leg{display:flex;align-items:center;gap:5px;font-family:var(--hand);font-size:19px;line-height:1}
+.gh-leg i{width:12px;height:12px;border-radius:3px;background:rgba(255,255,255,.065)}
+.gh-tip{position:absolute;z-index:5;pointer-events:none;padding:6px 11px;border-radius:10px;background:rgba(6,8,16,.92);border:1px solid rgba(143,179,255,.4);font:500 12px/1.3 var(--body);color:#eef3ff;white-space:nowrap;opacity:0;transform:translate(-50%,-100%) translateY(-8px);transition:opacity .15s}
 .gh-tip.on{opacity:1}
-@media (max-width:760px){.lbr{grid-template-columns:30px 96px 1fr 0;gap:8px;font-size:9px}.lbr .tg{display:none}}
-@media (max-width:620px){.ghcard{padding:22px 18px 20px;border-radius:30px}}
+@media (max-width:760px){.gh-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ghc{padding:22px 18px 18px;border-radius:24px}.lbr{grid-template-columns:30px 96px 1fr 0;gap:8px;font-size:9px}.lbr .tg{display:none}}
+@media (prefers-reduced-motion:reduce){.ghc .gh-grid .c{opacity:1!important;transform:none!important}}
+
 </style>
 </head>
 <body>
@@ -611,10 +630,14 @@ nav{position:sticky;top:max(12px,env(safe-area-inset-top,0px));z-index:30;margin
     <div class="brand"><i></i>Aman Dixit</div>
     <div class="navlinks">
       <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
       <button data-open="about">About</button>
-      <a href="https://github.com/am4ndixit" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://linkedin.com/in/am4ncodes" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="mailto:dixitaman117@gmail.com">Email</a>
+      <span class="sep" aria-hidden="true"></span>
+      <a class="nic ghi" href="https://github.com/am4ndixit" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="nic lni" href="https://linkedin.com/in/am4ncodes" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 11-.01-4.12 2.06 2.06 0 01.01 4.12zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
+      <a class="nic gm" href="mailto:dixitaman117@gmail.com" aria-label="Email (Gmail)" title="Email"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M2.8 6.5 12 13.2l9.2-6.7"/></svg></a>
+      <span class="sep" aria-hidden="true"></span>
+      <a class="nst" href="https://www.newtonschool.co/newton-school-of-technology" target="_blank" rel="noopener" aria-label="Newton School of Technology" title="Newton School of Technology"><img class="nf" src="data:image/png;base64,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" alt="Newton School of Technology" height="26"><img class="ne" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAABACAYAAABY1SR7AAADrElEQVR42u2aXUhUQRTHf6tBmtCXfRlFWZJRGRGipQ/1EhRlUGAGvfTSB4UhSVHUSw8R1FNRROVDFERhUFiCYERQWC/SB0FBpSFtRVBm32h6etiRlmVn7lzv3t17xQPD7M6cOTP/e87MnJkzERFhOFAWw4SGLZAuQIB+lfuVBuXXqH5HA+0u+/6r8jXJgMxMk6YG5RerfCyw1GXf2SqfFwTT6lP5gAcZv4MAJBVLZiQIQEalypQzDeSjynvifnv6Iib6AuT7DKgXKIj7Xw48SrVG/qRZS8VuQdgCSaf5LQZehn1nLwGeht1FWQg8c+B5EHQgc4DnDjyzgFNegQz4CGI+8MaBZ5PyAYs09f22y+904Gqcb+O0y/YC34GHQCsQ1fAWAC8c5FUBt9XvCRqecQCRhIOVX6esy8AF4L76Pw344NCmEmhL0N5e9aEGxzkGOAJ0ISLxyW/6KCJ1FnwbE8blmNKlETe0DmgO+wmx1ABivfLHOlR6rebfStvJnk5NtBvqy4CpScqXAPdsgdRbghZ1bJ0ILAJWWcqvtTCnH8Zyi8n+zu3ES0hrRaTTYXJ3Wsg5pGm7Q0Ss5ki2R5NpBgqBowae2cDJsBysDgObDfV7gClhcRqvAVsM9YfC5P1eAc4btBIqN36noW5jmIAI0KSp2x62g9VZTfmKsAFp0ZTnhPGoq9utJ4cNSHeqNuFMA8kKnCBC8EUGhguQ3ICMtc8rkJyAAMkzYbDVSCQAQEo05UkjVt80zMsCAER3Qfc2GZAnGuaKAGvkVTIglzXMGzIMothQF00GpFHDXJlhILs05Y90q1aPQdjxDALRHbgumpbfM5pG+zIE4rTD0VkL5Jyh4Y00DX7wDq0Q2K3huQN8/X9US36H9NJwB1Xt8Z4rPr3T9JGv6qOGcSyIl6XroMzhQi3XZyCmCzkRkZZEWaZOGg2C+kVkvI9Amhw+ZHaiLJOLUu3go3UDy32aI1WGulpUuM2N01jqUN8GHPQwYLc+XKt2FbNQ/36LCFOXiFQMwbQ6XES7Xplk2XZ4wrKzzyJSLyLlDvJmqNXPlj65Db2Z6BhwwKUpRIH3wC9icZNJxKK5eS5kdBGLxfcbbdTlc9kaYqHqdNEtYiE358k2hHe/44DHatf1k7YBDX7eovQoVe/y6WLiujLDBletUrCpbVXxc6/UICKThzqOSAqflBcBq4E6YK6lZm8Cl4C7XjuP+Pg2fooCVBBnxj+BTmJx8t5UdhYZeeQ/AsQf+gfTyRTeiKaRVAAAAABJRU5ErkJggg==" alt="" height="26"></a>
     </div>
   </nav>
 
@@ -657,6 +680,17 @@ nav{position:sticky;top:max(12px,env(safe-area-inset-top,0px));z-index:30;margin
 
   <!-- ===== about me, as a pinned 3D scroll timeline ===== -->
   <section class="fps" id="projects" aria-label="Featured projects"><h2>Featured <em>projects</em></h2><p class="fp-note">Each links to the code and states what is built, what is mocked, and the known limits.</p><div class="fp-grid"><article class="fp"><span class="tag">featured 1</span><h3>SkillStress</h3><p class="fp-sub">LLM evaluation workbench</p><p>Extracts skill “obligations” from Markdown, runs a provider-backed answer plus a same-model judge, proposes repairs, reruns for before/after comparison.</p><p class="fp-stack">React · TypeScript · FastAPI · SQLite · OpenAI/Ollama</p><div class="fp-act"><button class="btn" data-open="ss">Case study</button><a class="btn" href="https://github.com/am4ndixit/skillstress" target="_blank" rel="noopener">Code ↗</a></div></article><article class="fp"><span class="tag">featured 2</span><h3>Semester Quest</h3><p class="fp-sub">Study hub with RAG tutor</p><p>Gamified learning worlds, quizzes/XP, virtual terminal with Git missions, and retrieval over uploaded class files (PDF/DOCX/PPTX).</p><p class="fp-stack">React · FastAPI · SQLite · RAG · email-code auth</p><div class="fp-act"><button class="btn" data-open="sq">Case study</button><a class="btn" href="https://github.com/am4ndixit/semesterquest" target="_blank" rel="noopener">Code ↗</a></div></article><article class="fp"><span class="tag">featured 3</span><h3>MediLink</h3><p class="fp-sub">Healthcare platform, anemia screening</p><p>React frontend plus Express/Prisma backend: rotating refresh tokens with reuse detection, audit logging, FHIR R4 endpoints, mock-first integrations.</p><p class="fp-stack">React · Vite · Express · Prisma · FHIR</p><div class="fp-act"><button class="btn" data-open="ml">Case study</button><a class="btn" href="https://github.com/am4ndixit/medilink" target="_blank" rel="noopener">Code ↗</a></div></article></div></section>
+
+  <section class="fps" id="about-me" aria-label="About me"><h2>About <em>me</em></h2>
+<p class="lead">I am a first-year B.Tech student in Computer Science and AI/ML at Newton School of Technology, Pune. My technical focus is full-stack development and testing LLM-based systems. I built SkillStress, a workbench that checks whether a model follows a skill file (3rd place at Hacktober HackDay), Semester Quest, a study app with retrieval over class files, and MediLink, a healthcare platform with a screening flow. In the S&amp;AI course I submitted ten test-driven pull requests to AlgoScope. I am looking for software engineering and AI engineering internships and aiming for Google Summer of Code 2027.</p></section>
+<section class="fps" id="skills" aria-label="Skills"><h2>Skills</h2><p class="fp-note">Every skill links to code or a pull request that uses it.</p><div class="fp-grid"><div class="skc"><h3>Languages</h3><ul><li><a href="https://github.com/am4ndixit/skillstress/tree/main/backend" target="_blank" rel="noopener">Python</a></li><li><a href="https://github.com/S-AI-Projects/AlgoScope/pull/66" target="_blank" rel="noopener">JavaScript</a></li><li><a href="https://github.com/am4ndixit/skillstress/tree/main/frontend/src" target="_blank" rel="noopener">TypeScript</a></li></ul></div><div class="skc"><h3>Frameworks &amp; libraries</h3><ul><li><a href="https://github.com/am4ndixit/skillstress/tree/main/frontend" target="_blank" rel="noopener">React</a></li><li><a href="https://github.com/am4ndixit/semesterquest/tree/main/backend" target="_blank" rel="noopener">FastAPI</a></li><li><a href="https://github.com/am4ndixit/medilink/tree/main/server" target="_blank" rel="noopener">Express</a></li><li><a href="https://github.com/am4ndixit/medilink/blob/main/server/prisma/schema.prisma" target="_blank" rel="noopener">Prisma</a></li></ul></div><div class="skc"><h3>Data &amp; AI</h3><ul><li><a href="https://github.com/am4ndixit/skillstress/blob/main/backend/app/services/storage.py" target="_blank" rel="noopener">SQLite</a></li><li><a href="https://github.com/am4ndixit/skillstress/blob/main/backend/app/services/provider_runner.py" target="_blank" rel="noopener">OpenAI / Ollama APIs</a></li><li><a href="https://github.com/am4ndixit/semesterquest/blob/main/backend/app/rag.py" target="_blank" rel="noopener">Retrieval (RAG)</a></li></ul></div><div class="skc"><h3>Testing &amp; tools</h3><ul><li><a href="https://github.com/am4ndixit/skillstress/tree/main/backend/tests" target="_blank" rel="noopener">pytest</a></li><li><a href="https://github.com/S-AI-Projects/AlgoScope/pull/57" target="_blank" rel="noopener">Vitest</a></li><li><a href="https://github.com/S-AI-Projects/AlgoScope/pull/62" target="_blank" rel="noopener">Git &amp; GitHub PR workflow</a></li><li><a href="https://github.com/am4ndixit/medilink/blob/main/server/src/routes/auth.js" target="_blank" rel="noopener">JWT / bcrypt auth</a></li></ul></div></div></section>
+<section class="fps" id="contributions" aria-label="S&amp;AI open-source contributions"><h2>S&amp;AI open-source <em>contributions</em></h2>
+<p class="lead">Repository: <a href="https://github.com/S-AI-Projects/AlgoScope" target="_blank" rel="noopener">S-AI-Projects/AlgoScope</a>, an interactive algorithm visualiser. GitHub account: <a href="https://github.com/am4ndixit" target="_blank" rel="noopener">am4ndixit</a>. Ten pull requests (R62-T021 to R62-T030), 139 tests in total, all currently open and not yet merged. Each pull request solves one task with its own test file.</p>
+<div class="fp-grid"><article class="prc"><div class="pr-h"><b>R62-T021</b><span class="pr-st">open · 20 tests</span></div><p>Prefix sums: pure module + 20 tests so range-query results cannot silently change.</p><p class="pr-l"><a href="https://github.com/S-AI-Projects/AlgoScope/pull/57" target="_blank" rel="noopener">Pull request #57 ↗</a></p></article><article class="prc"><div class="pr-h"><b>R62-T022</b><span class="pr-st">open · 18 tests</span></div><p>mergeSortSteps: fixed edge cases (ties, reversed, single item), 18 tests.</p><p class="pr-l"><a href="https://github.com/S-AI-Projects/AlgoScope/pull/58" target="_blank" rel="noopener">Pull request #58 ↗</a></p></article><article class="prc"><div class="pr-h"><b>R62-T023</b><span class="pr-st">open · 17 tests</span></div><p>Euclid GCD steps: checked against a hand-calculated reference, 17 tests.</p><p class="pr-l"><a href="https://github.com/S-AI-Projects/AlgoScope/pull/62" target="_blank" rel="noopener">Pull request #62 ↗</a></p></article><article class="prc"><div class="pr-h"><b>R62-T024</b><span class="pr-st">open · 15 tests</span></div><p>binarySearchSteps: made step snapshots immutable so replays stay correct, 15 tests.</p><p class="pr-l"><a href="https://github.com/S-AI-Projects/AlgoScope/pull/65" target="_blank" rel="noopener">Pull request #65 ↗</a></p></article><article class="prc"><div class="pr-h"><b>R62-T025</b><span class="pr-st">open · 15 tests</span></div><p>LRU cache: deterministic, reproducible execution (seeded workload), 15 tests.</p><p class="pr-l"><a href="https://github.com/S-AI-Projects/AlgoScope/pull/66" target="_blank" rel="noopener">Pull request #66 ↗</a></p></article><article class="prc"><div class="pr-h"><b>R62-T026</b><span class="pr-st">open · 11 tests</span></div><p>maximalRectangleSteps: split pure logic from animation state, 11 tests.</p><p class="pr-l"><a href="https://github.com/S-AI-Projects/AlgoScope/pull/67" target="_blank" rel="noopener">Pull request #67 ↗</a></p></article><article class="prc"><div class="pr-h"><b>R62-T027</b><span class="pr-st">open · 12 tests</span></div><p>quickSortSteps: executable fixtures as documentation + pure quickSort, 12 tests.</p><p class="pr-l"><a href="https://github.com/S-AI-Projects/AlgoScope/pull/68" target="_blank" rel="noopener">Pull request #68 ↗</a></p></article><article class="prc"><div class="pr-h"><b>R62-T028</b><span class="pr-st">open · 7 tests</span></div><p>graphSearchSources: tested the unsupported start-node failure path, 7 tests.</p><p class="pr-l"><a href="https://github.com/S-AI-Projects/AlgoScope/pull/69" target="_blank" rel="noopener">Pull request #69 ↗</a></p></article><article class="prc"><div class="pr-h"><b>R62-T029</b><span class="pr-st">open · 9 tests</span></div><p>Sieve of Eratosthenes: complexity measured with exact operation counts, 9 tests.</p><p class="pr-l"><a href="https://github.com/S-AI-Projects/AlgoScope/pull/70" target="_blank" rel="noopener">Pull request #70 ↗</a></p></article><article class="prc"><div class="pr-h"><b>R62-T030</b><span class="pr-st">open · 15 tests</span></div><p>countingSortSteps: mutation-resistant tests + pure countingSort, 15 tests.</p><p class="pr-l"><a href="https://github.com/S-AI-Projects/AlgoScope/pull/71" target="_blank" rel="noopener">Pull request #71 ↗</a></p></article></div></section>
+<section class="fps" id="education" aria-label="Education and achievements"><h2>Education &amp; <em>achievements</em></h2><div class="fp-grid">
+<article class="fp"><span class="tag">education</span><h3>B.Tech, CS &amp; AI/ML</h3><p>Newton School of Technology, Pune. 4-year program, started August 2026. Expected graduation: 2030.</p></article>
+<article class="fp"><span class="tag">hackathon</span><h3>3rd place</h3><p>Hacktober HackDay, Vishwakarma University, organised by Google Developer Group. October 2026. Project: SkillStress.</p><div class="fp-act"><a href="https://github.com/am4ndixit/skillstress" target="_blank" rel="noopener">Project repository ↗</a></div></article></div></section>
+<section class="fps" id="contact" aria-label="Contact"><h2>Con<em>tact</em></h2><div class="fp-act"><a class="btn" href="mailto:dixitaman117@gmail.com">dixitaman117@gmail.com</a><a class="btn" href="https://github.com/am4ndixit" target="_blank" rel="noopener">github.com/am4ndixit ↗</a><a class="btn" href="https://linkedin.com/in/am4ncodes" target="_blank" rel="noopener">linkedin.com/in/am4ncodes ↗</a></div></section>
 
   <div class="step reveal"><span>next: my journey</span><span class="doodle" data-v="c"></span></div>
 
@@ -724,16 +758,22 @@ nav{position:sticky;top:max(12px,env(safe-area-inset-top,0px));z-index:30;margin
 
   <div class="step reveal"><span>next: my activity</span><span class="doodle" data-v="c"></span></div>
 
-  <section class="gh reveal" id="github" aria-label="GitHub contributions">
-    <div class="ghcard" id="ghcard">
-      <div class="gh-head">
-        <a class="gh-ic" href="https://github.com/am4ndixit" target="_blank" rel="noopener" aria-label="am4ndixit on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z"/></svg></a>
-        <div class="gh-t"><b>Contributions</b><small>last 12 months · click any square to open that day on GitHub</small></div>
-        <div class="gh-total" id="gh-total">0</div>
+  <section class="gh" id="gh-sec" aria-label="GitHub contributions">
+    <div class="ghc reveal" id="ghc">
+      <div class="gh-top">
+        <div><span class="tag">github activity</span><h2>A year of commits, <em>lit up blue.</em></h2></div>
+        <a class="btn" href="https://github.com/am4ndixit" target="_blank" rel="noopener">@am4ndixit ↗</a>
       </div>
-      <div class="gh-scroll"><div class="gh-inner"><div class="gh-grid" id="gh-grid" role="group" aria-label="GitHub contribution graph"></div></div></div>
+      <div class="gh-stats" id="gh-stats">
+        <div class="gh-stat"><b data-s="total">–</b><span>contributions</span></div>
+        <div class="gh-stat"><b data-s="cur">–</b><span>current streak</span></div>
+        <div class="gh-stat"><b data-s="long">–</b><span>longest streak</span></div>
+        <div class="gh-stat"><b data-s="best">–</b><span>best day</span></div>
+      </div>
+      <div class="gh-scroll" id="gh-scroll"><div class="gh-wrap"><div class="gh-months" id="gh-months"></div><div class="gh-days"><span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span></div><div class="gh-grid loading" id="gh-grid"></div></div></div>
+      <div class="gh-foot"><span id="gh-note">Loading live data from GitHub…</span><div class="gh-leg">Less <i data-l="0"></i><i data-l="1"></i><i data-l="2"></i><i data-l="3"></i><i data-l="4"></i> More</div></div>
+      <div class="gh-tip" id="gh-tip"></div>
     </div>
-    <div class="gh-tip" id="gh-tip"></div>
   </section>
 
   <div class="step reveal"><span>next: get in touch</span><span class="doodle" data-v="b"></span></div>
@@ -767,9 +807,9 @@ const EMAIL='dixitaman117@gmail.com', CHESS='https://www.chess.com/member/am4ncr
 const LINKS=[['LinkedIn · am4ncodes',LI],['GitHub · am4ndixit',GH]];
 const PROJ=['ss','sq','ml','mg'];
 const D={
- about:{kind:'about',eye:'hello',title:'Aman Dixit',lede:'Aspiring AI engineer at Newton School of Technology, Pune.',
-  body:['First-year student who builds projects at hackathons and in coursework, with a focus on using AI tools effectively.'],
-  facts:[['Role','Aspiring AI engineer'],['Studying','Newton School of Technology, Pune'],['Sem 1','Python, Mathematics-I, System & Web Essentials',1],['Goal','Top of batch across classes, contests and hackathons',1],['Win','3rd at Hacktober Hackday, Vishwakarma University'],['Next','Google Summer of Code 2027']],links:LINKS},
+ about:{kind:'about',eye:'hello',title:'Aman Dixit',lede:'First-year B.Tech student, Computer Science and AI/ML, Newton School of Technology, Pune.',
+  body:['Full-stack development and testing LLM-based systems. Ten test-driven pull requests to AlgoScope in the S&AI course. Looking for software and AI engineering internships.'],
+  facts:[['Role','Seeking SWE and AI engineering internships'],['Studying','Newton School of Technology, Pune'],['Sem 1','Python, Mathematics-I, System & Web Essentials',1],['Goal','Top of batch across classes, contests and hackathons',1],['Win','3rd at Hacktober Hackday, Vishwakarma University'],['Next','Google Summer of Code 2027']],links:LINKS},
  contact:{kind:'contact',eye:'say hi',title:'Find me online',lede:'The best way to reach me is GitHub or LinkedIn. I’m also always up for a game of chess.',ill:'contact'},
  mg:{kind:'project',status:'Live',eye:'more work',title:'MiniGoogle',blurb:'A 1998-style Google that ranks pages two ways.',ill:'mg',
   lede:'See why links-as-votes beat keyword spam.',
@@ -1171,72 +1211,55 @@ $$('[data-peek]').forEach(it=>{
     loops.push({scene:cv.closest('.scene'),fn:frame});frame(0);
   })();
 
-  /* ---------- GitHub contributions: green -> blue, clickable squares ---------- */
+  /* ---------- GitHub contributions ---------- */
   (function(){
-    const card=$('#ghcard');if(!card)return;
-    const grid=$('#gh-grid'),tip=$('#gh-tip'),tot=$('#gh-total');
-    const USER='am4ndixit';
-    const API='https://github-contributions-api.jogruber.de/v4/'+USER+'?y=last',KEY='gh-am4ndixit-v1',EVERY=30*60*1000;
-    const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const USER='am4ndixit',card=$('#ghc'),grid=$('#gh-grid'),months=$('#gh-months'),note=$('#gh-note'),tip=$('#gh-tip'),scroller=$('#gh-scroll');
+    if(!card)return;
+    const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const fmt=d=>new Date(d+'T00:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+    const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    function placeholder(){const out=[],end=new Date();for(let i=364;i>=0;i--){const d=new Date(end);d.setDate(end.getDate()-i);out.push({date:iso(d),count:0,level:0})}return out}
+    function draw(data,live){
+      grid.innerHTML='';months.innerHTML='';
+      const first=new Date(data[0].date+'T00:00:00'),lead=first.getDay();
+      const cells=[];for(let i=0;i<lead;i++)cells.push(null);data.forEach(d=>cells.push(d));
+      const cols=Math.ceil(cells.length/7);let lastM=-1,lastCol=-9;
+      cells.forEach((d,i)=>{
+        const c=document.createElement('i'),col=Math.floor(i/7),row=i%7;c.className='c';
+        c.style.setProperty('--dl',(col*14+row*9)+'ms');
+        if(!d)c.classList.add('pad');else{c.dataset.l=d.level;if(live)c.dataset.t=d.count+' contribution'+(d.count===1?'':'s')+' · '+fmt(d.date);else c.dataset.t=fmt(d.date);
+          if(row===0||i===lead){const m=new Date(d.date+'T00:00:00').getMonth();if(m!==lastM&&col-lastCol>=3){const s=document.createElement('span');s.textContent=MN[m];s.style.left=(col*15)+'px';months.appendChild(s);lastM=m;lastCol=col}}}
+        grid.appendChild(c)});
+      grid.classList.toggle('loading',!live);
+      requestAnimationFrame(()=>{scroller.scrollLeft=scroller.scrollWidth})}
+    function stats(data){
+      const total=data.reduce((a,d)=>a+d.count,0);let best=0,bd=null,run=0,long=0;
+      data.forEach(d=>{if(d.count>best){best=d.count;bd=d}if(d.count>0){run++;long=Math.max(long,run)}else run=0});
+      let cur=0,i=data.length-1;if(data[i].count===0)i--;for(;i>=0&&data[i].count>0;i--)cur++;
+      const set=(k,v)=>{const e=$('[data-s="'+k+'"]');if(e)e.textContent=v};
+      set('total',total.toLocaleString());set('cur',cur+(cur===1?' day':' days'));set('long',long+(long===1?' day':' days'));set('best',best)}
+    draw(placeholder(),false);
     async function load(){
       try{
-        const r=await fetch(API,{cache:'no-store'});if(!r.ok)throw 0;const j=await r.json();
-        const a=(j.contributions||[]).map(d=>({date:d.date,count:d.count|0,level:Math.max(0,Math.min(4,d.level|0))}));
-        if(!a.length)throw 0;
-        try{localStorage.setItem(KEY,JSON.stringify(a))}catch(_){}
-        return a
-      }catch(_){
-        try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.length)return s}catch(_){}
-        return null
-      }
-    }
-    function build(a){
-      grid.textContent='';
-      const pad=a.length?new Date(a[0].date+'T00:00:00').getDay():0,cells=[];
-      for(let i=0;i<pad;i++)cells.push(null);a.forEach(d=>cells.push(d));
-      const weeks=Math.ceil(cells.length/7);
-      cells.forEach((d,i)=>{
-        const el=document.createElement(d?'a':'i');
-        el.className='c'+(d?'':' e');
-        el.style.setProperty('--w',Math.floor(i/7));
-        if(d){
-          const dt=new Date(d.date+'T00:00:00');
-          const label=(d.count?d.count+' contribution'+(d.count>1?'s':''):'No contributions')+' · '+DN[dt.getDay()]+', '+MN[dt.getMonth()]+' '+dt.getDate()+' (open ↗)';
-          el.dataset.l=d.level;
-          el.dataset.t=label;
-          el.href='https://github.com/'+USER+'?tab=overview&from='+d.date+'&to='+d.date;
-          el.target='_blank';
-          el.rel='noopener';
-          el.setAttribute('aria-label',label);
-        }else{
-          el.dataset.l=0;
-        }
-        grid.appendChild(el)
-      });
-      const box=card.querySelector('.gh-scroll'),gap=4,cell=Math.max(10,Math.min(20,Math.floor((box.clientWidth-4-(weeks-1)*gap)/weeks)));
-      card.style.setProperty('--cell',cell+'px')
-    }
-    function countUp(el,to){const t0=performance.now();(function f(n){const k=Math.min(1,(n-t0)/1400),e=1-Math.pow(1-k,3);el.textContent=Math.round(to*e).toLocaleString();if(k<1)requestAnimationFrame(f)})(t0)}
-    let data=null,inview=false,played=false,lastTry=0;
-    function show(){
-      if(!data)return;const total=data.reduce((s,d)=>s+d.count,0);
-      if(!played&&inview){played=true;countUp(tot,total);setTimeout(()=>grid.classList.add('blue'),1000)}
-      else if(played)tot.textContent=total.toLocaleString()
-    }
-    async function refresh(){
-      lastTry=Date.now();
-      const a=await load();
-      if(a){data=a;build(a);if(!played&&!inview)tot.textContent=a.reduce((s,d)=>s+d.count,0).toLocaleString();show()}
-      else if(!data){const a2=[],d0=new Date();d0.setDate(d0.getDate()-364);for(let i=0;i<365;i++){const d=new Date(d0);d.setDate(d0.getDate()+i);a2.push({date:d.toISOString().slice(0,10),count:0,level:0})}
-        build(a2);grid.classList.add('blue');tot.textContent='—'}
-    }
-    new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){inview=true;show()}}),{threshold:.35}).observe(card);
-    refresh();
-    setInterval(refresh,EVERY);
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-lastTry>EVERY)refresh()});
-    addEventListener('resize',()=>{if(data)build(data)});
-    grid.addEventListener('pointermove',e=>{const c=e.target.closest('.c');if(!c||c.classList.contains('e')){tip.classList.remove('on');return}tip.textContent=c.dataset.t;tip.style.left=e.clientX+'px';tip.style.top=e.clientY+'px';tip.classList.add('on')});
-    grid.addEventListener('pointerleave',()=>tip.classList.remove('on'));
+        const r=await fetch('https://github-contributions-api.jogruber.de/v4/'+USER+'?y=last',{cache:'no-store'});
+        if(!r.ok)throw new Error(r.status);
+        const j=await r.json();if(!j.contributions||!j.contributions.length)throw new Error('empty');
+        const data=j.contributions.map(d=>({date:d.date,count:d.count,level:d.level}));
+        try{localStorage.setItem('gh-contrib',JSON.stringify({t:Date.now(),data}))}catch(_){}
+        return {data,live:true}
+      }catch(e){
+        try{const c=JSON.parse(localStorage.getItem('gh-contrib')||'null');if(c&&c.data)return {data:c.data,live:true,cached:true}}catch(_){}
+        return null}}
+    load().then(res=>{
+      if(!res){note.innerHTML='Couldn’t load live data right now. <a href="https://github.com/'+USER+'" target="_blank" rel="noopener">See the full graph on GitHub ↗</a>';return}
+      draw(res.data,true);stats(res.data);
+      note.innerHTML=(res.cached?'Showing last saved data · ':'Live from GitHub · ')+'<a href="https://github.com/'+USER+'" target="_blank" rel="noopener">@'+USER+' ↗</a>'});
+    /* tooltip + glass highlight */
+    function showTip(e){const c=e.target.closest&&e.target.closest('.c[data-t]');if(!c){tip.classList.remove('on');return}
+      const a=c.getBoundingClientRect(),b=card.getBoundingClientRect();tip.textContent=c.dataset.t;
+      tip.style.left=(a.left-b.left+a.width/2)+'px';tip.style.top=(a.top-b.top)+'px';tip.classList.add('on')}
+    grid.addEventListener('pointerover',showTip);grid.addEventListener('pointerleave',()=>tip.classList.remove('on'));
+    grid.addEventListener('click',showTip);
     card.addEventListener('pointermove',e=>{const b=card.getBoundingClientRect();card.style.setProperty('--gx',(e.clientX-b.left)+'px');card.style.setProperty('--gy',(e.clientY-b.top)+'px')},{passive:true});
   })();
 })();
